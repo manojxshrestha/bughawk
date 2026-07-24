@@ -115,6 +115,20 @@ export async function list() {
   }
 }
 
+// Clear ALL project data from IndexedDB. Keeps only the auth key so the
+// login gate still works after reload.
+export async function clearAllData() {
+  try {
+    const allKeys = await list();
+    const toDelete = allKeys.filter((k) => k !== KEYS.auth && k.startsWith(PREFIX));
+    const tx = (await db()).transaction(STORE, 'readwrite');
+    await Promise.all(toDelete.map((k) => tx.store.delete(k)));
+    await tx.done;
+  } catch (e) {
+    emitError(`Failed to clear data. ${e.message}`);
+  }
+}
+
 // One-time migration: copy any existing `bbd:*` localStorage entries into
 // IndexedDB, then clear them. No-op if nothing is there.
 export async function migrateFromLocalStorage() {

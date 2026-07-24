@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { getAuth, setCredentials, verify, lock } from '../../lib/auth.js';
+import { clearAllData } from '../../lib/storage.js';
 
 // Change the login username/password (requires the current password) + log out.
 export default function SecurityPanel() {
@@ -33,7 +34,7 @@ export default function SecurityPanel() {
     setMsg({ ok: true, text: 'Credentials updated.' });
   };
 
-  const logout = () => { lock(); window.location.reload(); };
+  const logout = async () => { await clearAllData(); lock(); window.location.reload(); };
 
   return (
     <form onSubmit={save}>
