@@ -88,11 +88,9 @@ export default function TopBar({
       </div>
 
       <div className="topbar-right">
-        <button className="icon-btn" onClick={onImport} title="Import project zip">
-          +
-        </button>
+        <button className="icon-btn" onClick={onImport} title="Import project zip">+</button>
         <button className="icon-btn" onClick={onToggleTheme} title="Toggle theme">
-          {theme === 'light' ? '' : ''}
+          {theme === 'light' ? '☀' : '☾'}
         </button>
       </div>
     </header>
