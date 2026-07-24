@@ -18,4 +18,3 @@ jobs:
       - run: npm test
       - run: npm run build
       - run: npm run lint
-        continue-on-error: true # advisory until the existing tree is lint-clean

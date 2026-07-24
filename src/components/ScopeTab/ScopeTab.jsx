@@ -123,10 +123,10 @@ export default function ScopeTab({ rules, onSaveRules, subRecords, portRecords, 
         <button className="btn btn-primary btn-sm" onClick={addRule}>＋ Add</button>
         <div className="filter-spacer" />
         <button className="btn btn-ghost btn-sm" onClick={() => setDiffOpen(true)} disabled={rules.length === 0}>
-          🔀 Update &amp; diff
+           Update &amp; diff
         </button>
         <button className="btn btn-ghost btn-sm" onClick={() => setPasteOpen((o) => !o)}>
-          📋 Paste program scope
+           Paste program scope
         </button>
       </div>
 
@@ -204,7 +204,7 @@ export default function ScopeTab({ rules, onSaveRules, subRecords, portRecords, 
       {cov.unknown.length > 0 && (
         <div className="glass-card scope-gap-card">
           <div className="scope-gap-head">
-            ⚠ {cov.unknown.length} discovered host(s) match no scope rule
+             {cov.unknown.length} discovered host(s) match no scope rule
             <span className="scope-gap-sub">— clarify with the program or add a rule</span>
           </div>
           <div className="scope-gap-list">
@@ -244,7 +244,7 @@ function RuleList({ title, cls, rules, onRemove }) {
             )}
             {r.note && <span className="scope-note">{r.note}</span>}
             <span className="filter-spacer" />
-            <button className="icon-btn" title="Remove" onClick={() => onRemove(r.id)}>✕</button>
+            <button className="icon-btn" title="Remove" onClick={() => onRemove(r.id)}></button>
           </div>
         ))
       )}

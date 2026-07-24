@@ -9,7 +9,7 @@ const WL_PAGE = 100;
 
 const WEEK = 7 * 24 * 60 * 60 * 1000;
 const fmt = (ts) => new Date(ts).toLocaleString();
-const EVENT_LABEL = { host_new: '🆕 new host', host_back: '⚠ resurrected', host_gone: '✖ gone', port_new: '➕ new port' };
+const EVENT_LABEL = { host_new: '🆕 new host', host_back: ' resurrected', host_gone: ' gone', port_new: ' new port' };
 
 const SurfaceTab = memo(function SurfaceTab({ activeProjectId = 'default', subs = [], ports = [], scopeRules = [] }) {
   const [urlResults, setUrlResults] = useState([]);
@@ -134,15 +134,15 @@ const SurfaceTab = memo(function SurfaceTab({ activeProjectId = 'default', subs 
           <h1>Attack Surface</h1>
           <p>Cross-tab graph · {nodes.length.toLocaleString()} hosts · {events.length.toLocaleString()} events{savedAt ? ` · last snapshot ${fmt(savedAt)}` : ' · no snapshot yet'}</p>
         </div>
-        <button className="sf-btn-primary" onClick={takeSnapshot}>📸 Snapshot now</button>
+        <button className="sf-btn-primary" onClick={takeSnapshot}> Snapshot now</button>
       </header>
 
       {/* Priority worklist */}
       <section className="sf-panel sf-pad">
         <div className="sf-wl-head">
-          <strong>🎯 Priority Worklist</strong>
+          <strong> Priority Worklist</strong>
           <span className="sf-count">{wlFiltered.length.toLocaleString()} items</span>
-          <button className="sf-btn-ghost" onClick={exportWorklist} style={{ marginLeft: 'auto' }}>📦 Export CSV</button>
+          <button className="sf-btn-ghost" onClick={exportWorklist} style={{ marginLeft: 'auto' }}> Export CSV</button>
         </div>
 
         <div className="sf-weights">
@@ -230,7 +230,7 @@ const SurfaceTab = memo(function SurfaceTab({ activeProjectId = 'default', subs 
       {/* Nuclei findings */}
       <section className="sf-panel sf-pad">
         <div className="sf-wl-head">
-          <strong>🧪 Nuclei findings</strong>
+          <strong> Nuclei findings</strong>
           <span className="sf-count">{nuclei.length.toLocaleString()} imported · correlated onto the graph + worklist</span>
         </div>
         <textarea
@@ -275,12 +275,12 @@ const SurfaceTab = memo(function SurfaceTab({ activeProjectId = 'default', subs 
 
         {/* Resurrections + churn */}
         <section className="sf-panel sf-pad">
-          <strong>⚠ Resurrected ({resur.length})</strong>
+          <strong> Resurrected ({resur.length})</strong>
           <div className="sf-feed">
             {resur.length === 0 && <div className="sf-empty">None yet — hosts that come back after going dark show here.</div>}
             {resur.map((e, i) => <div key={i} className="sf-evt"><span className="sf-evt-entity">{e.entity}</span><span className="sf-evt-ts">{fmt(e.ts)}</span></div>)}
           </div>
-          <strong style={{ display: 'block', marginTop: 16 }}>🔥 Churn (most-changed)</strong>
+          <strong style={{ display: 'block', marginTop: 16 }}> Churn (most-changed)</strong>
           <div className="sf-feed">
             {churnTop.length === 0 && <div className="sf-empty">—</div>}
             {churnTop.map((c) => <div key={c.entity} className="sf-evt"><span className="sf-evt-entity">{c.entity}</span><span className="sf-evt-ts">{c.count}×</span></div>)}
@@ -290,7 +290,7 @@ const SurfaceTab = memo(function SurfaceTab({ activeProjectId = 'default', subs 
 
       {takeovers.length > 0 && (
         <section className="sf-panel sf-pad">
-          <strong className="sf-to-title">🎯 Subdomain takeover candidates ({takeovers.length})</strong>
+          <strong className="sf-to-title"> Subdomain takeover candidates ({takeovers.length})</strong>
           <div className="sf-table">
             {takeovers.map((n) => (
               <div key={n.host} className="sf-row">

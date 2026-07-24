@@ -165,7 +165,7 @@ const JsReconTab = memo(function JsReconTab({ activeProjectId, onCreateFinding, 
       <style>{styles}</style>
       <header className="jr-head">
         <div>
-          <h1>🔎 JS Recon</h1>
+          <h1> JS Recon</h1>
           <p>Paste JS · a list of .js URLs · or load files → secrets · misconfigs · endpoints · chunks · source maps</p>
         </div>
         <button className="jr-btn-primary" onClick={analyze} disabled={busy}>{busy ? 'Analyzing…' : 'Analyze'}</button>
@@ -196,7 +196,7 @@ const JsReconTab = memo(function JsReconTab({ activeProjectId, onCreateFinding, 
           <div className="jr-row">
             {prev && (
               <button className={`jr-btn ${diffOnly ? 'jr-on' : ''}`} onClick={() => setDiffOnly((d) => !d)} title="Show only what's new vs the previous scan">
-                {diffOnly ? '◉ New since last scan' : '○ New since last scan'}
+                {diffOnly ? ' New since last scan' : ' New since last scan'}
               </button>
             )}
             <button className="jr-btn" onClick={() => exportJsReconReport(shown, 'target')}>⤓ Report (.md)</button>
@@ -239,7 +239,7 @@ function Commands({ data }) {
   if (!cmds.length) return null;
   return (
     <section className="jr-panel" style={{ marginTop: 14 }}>
-      <div className="jr-sechead" style={{ fontSize: 12 }}>⌨ Ready-to-run commands {base ? `(base: ${base})` : ''}</div>
+      <div className="jr-sechead" style={{ fontSize: 12 }}> Ready-to-run commands {base ? `(base: ${base})` : ''}</div>
       {cmds.map((c, i) => (
         <div key={i} className="jr-cmd">
           <div className="jr-cmd-head">
@@ -349,7 +349,7 @@ function ByFile({ data, onFinding }) {
     <section className="jr-panel">
       <div className="jr-row" style={{ marginTop: 0 }}>
         <button className="jr-btn" onClick={() => { setAllOpen((a) => !a); setOpen(new Set()); }}>
-          {allOpen ? '▾ Collapse all' : '▸ Expand all'}
+          {allOpen ? ' Collapse all' : ' Expand all'}
         </button>
         <span className="jr-meta">{files.length.toLocaleString()} file(s) with findings</span>
       </div>
@@ -359,7 +359,7 @@ function ByFile({ data, onFinding }) {
         return (
           <div key={idx}>
             <button className="jr-fhead jr-fhead-btn" onClick={() => toggle(idx)}>
-              <span className="jr-caret">{o ? '▾' : '▸'}</span> 📄 {f.source}
+              <span className="jr-caret">{o ? '' : ''}</span>  {f.source}
               {f.framework && f.framework.length ? <span className="jr-fwk"> [{f.framework.join(', ')}]</span> : null}
               {f.summary ? <span className="jr-risk"> risk {f.summary.riskScore}</span> : null}
               <span className="jr-fcount">{count(f)} finding(s)</span>

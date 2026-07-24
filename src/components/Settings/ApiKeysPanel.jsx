@@ -30,7 +30,7 @@ export default function ApiKeysPanel() {
   }, [vault, loaded]);
 
   const tool = TOOL_BY_ID[activeId];
-  const values = vault[activeId] || {};
+  const values = useMemo(() => vault[activeId] || {}, [vault, activeId]);
   const setField = (k, val) => setVault((p) => ({ ...p, [activeId]: { ...(p[activeId] || {}), [k]: val } }));
 
   const exportText = useMemo(
@@ -55,7 +55,7 @@ export default function ApiKeysPanel() {
       <style>{styles}</style>
       <div className="ak-head">
         <div>
-          <h3 className="settings-h" style={{ margin: 0 }}>🔑 API Keys</h3>
+          <h3 className="settings-h" style={{ margin: 0 }}> API Keys</h3>
           <p className="ak-sub">Stored locally in IndexedDB — never sent anywhere. Fill what you have; generate ready configs.</p>
         </div>
         <label className="ak-show"><input type="checkbox" checked={show} onChange={(e) => setShow(e.target.checked)} /> show keys</label>
@@ -99,7 +99,7 @@ export default function ApiKeysPanel() {
           <div className="ak-export-head">
             <strong>{tool.exportKind === 'yaml' ? tool.exportName : 'environment variables'}</strong>
             <div className="ak-export-actions">
-              <button className="ak-btn" onClick={() => copy(exportText, 'exp')}>{copied === 'exp' ? '✓ copied' : 'Copy'}</button>
+              <button className="ak-btn" onClick={() => copy(exportText, 'exp')}>{copied === 'exp' ? ' copied' : 'Copy'}</button>
               <button className="ak-btn" onClick={download}>Download</button>
             </div>
           </div>

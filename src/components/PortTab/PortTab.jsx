@@ -160,12 +160,12 @@ export default function PortTab({ ports, projectName, onCopyToast, subRecords, o
 
       {records.length === 0 ? (
         <div className="glass-card empty-state">
-          <div className="empty-icon">🖧</div>
+          <div className="empty-icon"></div>
           <div className="empty-title">No port data yet</div>
           <div className="empty-sub">Paste Nmap, Masscan, Naabu, or Rustscan output above to begin.</div>
           {ports.sessions.length > 0 && (
             <button className="btn btn-ghost btn-sm" style={{ marginTop: 12 }} onClick={() => setSessionsOpen(true)}>
-              💾 Reload a saved session ({ports.sessions.length})
+               Reload a saved session ({ports.sessions.length})
             </button>
           )}
         </div>
@@ -184,8 +184,8 @@ export default function PortTab({ ports, projectName, onCopyToast, subRecords, o
                   {s} <b>{sevCounts[s]}</b>
                 </Pill>
               ))}
-              {sevCounts.kev > 0 && <Pill className="sev-critical" active={flag === 'kev'} onClick={() => setFlag(flag === 'kev' ? null : 'kev')}>🔥 KEV <b>{sevCounts.kev}</b></Pill>}
-              {sevCounts.danger > 0 && <Pill className="sev-high" active={flag === 'danger'} onClick={() => setFlag(flag === 'danger' ? null : 'danger')}>⚠ Misconfig <b>{sevCounts.danger}</b></Pill>}
+              {sevCounts.kev > 0 && <Pill className="sev-critical" active={flag === 'kev'} onClick={() => setFlag(flag === 'kev' ? null : 'kev')}> KEV <b>{sevCounts.kev}</b></Pill>}
+              {sevCounts.danger > 0 && <Pill className="sev-high" active={flag === 'danger'} onClick={() => setFlag(flag === 'danger' ? null : 'danger')}> Misconfig <b>{sevCounts.danger}</b></Pill>}
               <Pill active={flag === 'cve'} onClick={() => setFlag(flag === 'cve' ? null : 'cve')}>Has CVE</Pill>
             </div>
 
@@ -215,13 +215,13 @@ export default function PortTab({ ports, projectName, onCopyToast, subRecords, o
               <option value="flat">No grouping</option>
             </select>
             <button className="btn btn-ghost btn-sm" onClick={runCveLookup} disabled={!!cveBusy} title="Query Shodan CVEDB + CISA KEV">
-              {cveBusy ? `CVEs ${cveBusy.done}/${cveBusy.total}…` : '🛡 Lookup CVEs'}
+              {cveBusy ? `CVEs ${cveBusy.done}/${cveBusy.total}…` : ' Lookup CVEs'}
             </button>
             <button className="btn btn-ghost btn-sm" onClick={() => setDiffOpen(true)} title="Compare against a saved session">
-              🔀 Diff
+               Diff
             </button>
             <button className="btn btn-ghost btn-sm" onClick={() => setSessionsOpen(true)} title="Save / reload named snapshots">
-              💾 Sessions{ports.sessions.length ? ` (${ports.sessions.length})` : ''}
+               Sessions{ports.sessions.length ? ` (${ports.sessions.length})` : ''}
             </button>
             <ExportMenu targets={exportTargets} projectName={projectName} ports={ports} onClear={clearAll} onCopyToast={onCopyToast} allRecords={records} scopeStatus={scopeStatus} hasScope={hasScope} />
           </div>
@@ -253,14 +253,14 @@ export default function PortTab({ ports, projectName, onCopyToast, subRecords, o
           <button className="btn btn-ghost btn-sm" onClick={() => {
             if (hasScope) {
               const oos = [...new Set(records.filter((r) => checked.has(r.id) && scopeStatus(r.host) === 'out').map((r) => r.host))];
-              if (oos.length && !confirm(`⚠ ${oos.length} selected host(s) are OUT OF SCOPE:\n${oos.slice(0, 8).join('\n')}${oos.length > 8 ? '\n…' : ''}\n\nMark them vulnerable anyway?`)) return;
+              if (oos.length && !confirm(` ${oos.length} selected host(s) are OUT OF SCOPE:\n${oos.slice(0, 8).join('\n')}${oos.length > 8 ? '\n…' : ''}\n\nMark them vulnerable anyway?`)) return;
             }
             bulkSetAudit(checked, 'vulnerable');
           }}>Mark vulnerable</button>
           <button className="btn btn-ghost btn-sm" onClick={runCveLookup} disabled={!!cveBusy}>Lookup CVEs</button>
           <button className="btn btn-ghost btn-sm" onClick={() => exportCsv(records.filter((r) => checked.has(r.id)), 'selection')}>Export CSV</button>
           <button className="btn btn-ghost btn-sm" style={{ color: 'var(--status-5xx)' }} onClick={() => { deleteMany(checked); setChecked(new Set()); }}>Delete</button>
-          <button className="btn btn-ghost btn-sm" onClick={() => setChecked(new Set())}>Clear ✕</button>
+          <button className="btn btn-ghost btn-sm" onClick={() => setChecked(new Set())}>Clear </button>
         </div>
       )}
 
@@ -297,7 +297,7 @@ function HostGroup({ host, items, sub, scopeBadge, checked, toggleCheck, copyVal
           onClick={(ev) => ev.stopPropagation()}
           onChange={() => { const target = !allChecked; items.forEach((x) => { if (checked.has(x.r.id) !== target) toggleCheck(x.r.id); }); }} />
         <button className="host-caret-btn" onClick={() => setOpen((o) => !o)}>
-          <span className="host-caret">{open ? '▾' : '▸'}</span>
+          <span className="host-caret">{open ? '' : ''}</span>
           <span className={`sev-dot sev-bg-${worst}`} />
           <span className="host-name mono">{host}</span>
           {ip && <span className="host-ip mono">{ip}</span>}
@@ -314,8 +314,8 @@ function HostGroup({ host, items, sub, scopeBadge, checked, toggleCheck, copyVal
         <span className="host-portcount">{items.length} {items.length === 1 ? 'port' : 'ports'}</span>
         {sevCount.critical > 0 && <span className="mini-tag danger">{sevCount.critical} critical</span>}
         {sevCount.high > 0 && <span className="mini-tag exp">{sevCount.high} high</span>}
-        {danger > 0 && <span className="mini-tag danger">⚠ {danger}</span>}
-        {kev > 0 && <span className="mini-tag kev">🔥 {kev}</span>}
+        {danger > 0 && <span className="mini-tag danger"> {danger}</span>}
+        {kev > 0 && <span className="mini-tag kev"> {kev}</span>}
         {cve > 0 && <span className="mini-tag cve">{cve} CVE</span>}
       </div>
       {open && (
@@ -329,7 +329,7 @@ function HostGroup({ host, items, sub, scopeBadge, checked, toggleCheck, copyVal
               <span className="hport-port mono">{r.port}/{r.proto}{!r.state.startsWith('open') && <em className="state-tag"> {r.state}</em>}</span>
               <span className="hport-svc">{[r.service, r.product, r.version].filter(Boolean).join(' ') || '—'}</span>
               <span className="hport-tags">
-                {r.kev && <span className="mini-tag kev">🔥 KEV</span>}
+                {r.kev && <span className="mini-tag kev"> KEV</span>}
                 {r.cves && r.cves.length > 0 && <span className="mini-tag cve">{r.cves.length} CVE</span>}
                 {e.exploits.length > 0 && <span className="mini-tag exp">exploit</span>}
                 {e.dangerousFlags.length > 0 && <span className="mini-tag danger">misconfig</span>}
@@ -337,7 +337,7 @@ function HostGroup({ host, items, sub, scopeBadge, checked, toggleCheck, copyVal
               </span>
               <span className="hport-act" onClick={(ev) => ev.stopPropagation()}>
                 <button className="icon-btn" title="Copy host:port" onClick={() => copyVal(`${r.host}:${r.port}`)}>⧉</button>
-                <button className="icon-btn" title="Flag" onClick={() => toggleTag(r.id)}>{r.tag ? '★' : '☆'}</button>
+                <button className="icon-btn" title="Flag" onClick={() => toggleTag(r.id)}>{r.tag ? '' : ''}</button>
               </span>
             </div>
           ))}
@@ -347,7 +347,7 @@ function HostGroup({ host, items, sub, scopeBadge, checked, toggleCheck, copyVal
   );
 }
 
-function PortTable({ rows, checked, toggleCheck, onSort, sort, copyVal, toggleTag, setAudit, setDetail }) {
+function PortTable({ rows, checked, toggleCheck, onSort, sort, copyVal, toggleTag, setDetail }) {
   const sortArrow = (key) => (sort.key === key ? (sort.dir === 'asc' ? ' ↑' : ' ↓') : '');
   return (
     <div className="vtable">
@@ -371,14 +371,14 @@ function PortTable({ rows, checked, toggleCheck, onSort, sort, copyVal, toggleTa
               </span>
               <span className="pc-sev"><span className={`sev-pill sev-${e.severity}`}>{e.severity}</span></span>
               <span className="pc-host mono" title={r.ip || ''}>
-                {r.tag && <span className="star">★</span>}{r.host}
+                {r.tag && <span className="star"></span>}{r.host}
               </span>
               <span className="pc-port mono">{r.port}/{r.proto}
                 {!r.state.startsWith('open') && <span className="state-tag"> {r.state}</span>}
               </span>
               <span className="pc-svc">{[r.service, r.product, r.version].filter(Boolean).join(' ') || '—'}</span>
               <span className="pc-tags">
-                {r.kev && <span className="mini-tag kev">🔥 KEV</span>}
+                {r.kev && <span className="mini-tag kev"> KEV</span>}
                 {r.cves && r.cves.length > 0 && <span className="mini-tag cve">{r.cves.length} CVE</span>}
                 {e.exploits.length > 0 && <span className="mini-tag exp">exploit</span>}
                 {e.dangerousFlags.length > 0 && <span className="mini-tag danger">misconfig</span>}
@@ -386,7 +386,7 @@ function PortTable({ rows, checked, toggleCheck, onSort, sort, copyVal, toggleTa
               </span>
               <span className="pc-act" onClick={(ev) => ev.stopPropagation()}>
                 <button className="icon-btn" title="Copy host:port" onClick={() => copyVal(`${r.host}:${r.port}`)}>⧉</button>
-                <button className="icon-btn" title="Flag" onClick={() => toggleTag(r.id)}>{r.tag ? '★' : '☆'}</button>
+                <button className="icon-btn" title="Flag" onClick={() => toggleTag(r.id)}>{r.tag ? '' : ''}</button>
               </span>
             </div>
           ))}
@@ -436,7 +436,7 @@ function ExportMenu({ targets, projectName, ports, onClear, onCopyToast, allReco
 
   return (
     <div className="menu">
-      <button className="btn btn-ghost btn-sm" onClick={() => setOpen((o) => !o)}>Data ▾</button>
+      <button className="btn btn-ghost btn-sm" onClick={() => setOpen((o) => !o)}>Data </button>
       {open && (
         <div className="menu-list" onMouseLeave={close}>
           <button className="menu-item" onClick={() => { exportMarkdown(targets(), projectName); close(); }}>Export Report (.md)</button>

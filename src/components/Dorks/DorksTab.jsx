@@ -100,12 +100,12 @@ const DorksTab = memo(function DorksTab({ defaultTarget = '' }) {
 
       <header className="dk-head">
         <div>
-          <h1>{engine === 'github' ? '🐙 GitHub Dorks' : '🔍 Google Dorks'}</h1>
+          <h1>{engine === 'github' ? ' GitHub Dorks' : ' Google Dorks'}</h1>
           <p>{dorks.length} dorks · {engine === 'github' ? "code-search the target's org & domain for leaked secrets" : 'search Google for exposed files, panels & leaks'}</p>
         </div>
         <div className="dk-engine">
-          <button className={engine === 'github' ? 'on' : ''} onClick={() => { setEngine('github'); setCat('all'); }}>🐙 GitHub</button>
-          <button className={engine === 'google' ? 'on' : ''} onClick={() => { setEngine('google'); setCat('all'); }}>🔍 Google</button>
+          <button className={engine === 'github' ? 'on' : ''} onClick={() => { setEngine('github'); setCat('all'); }}> GitHub</button>
+          <button className={engine === 'google' ? 'on' : ''} onClick={() => { setEngine('google'); setCat('all'); }}> Google</button>
         </div>
       </header>
 
@@ -149,8 +149,8 @@ const DorksTab = memo(function DorksTab({ defaultTarget = '' }) {
               ))}
             </div>
             <input className="dk-filter" placeholder="Filter dorks…" value={filter} onChange={(e) => setFilter(e.target.value)} />
-            <button className="dk-btn" onClick={copyAllQueries}>{copied === 'all-q' ? '✓' : 'Copy queries'}</button>
-            <button className="dk-btn" onClick={copyAllUrls}>{copied === 'all-u' ? '✓' : 'Copy URLs'}</button>
+            <button className="dk-btn" onClick={copyAllQueries}>{copied === 'all-q' ? '' : 'Copy queries'}</button>
+            <button className="dk-btn" onClick={copyAllUrls}>{copied === 'all-u' ? '' : 'Copy URLs'}</button>
           </div>
 
           {grouped.map(([c, items]) => (
@@ -161,9 +161,9 @@ const DorksTab = memo(function DorksTab({ defaultTarget = '' }) {
                   <input type="checkbox" className="dk-chk" checked={!!opened[d.query]} onChange={(e) => setMark(d.query, e.target.checked)} title="Mark as checked" />
                   <code className="dk-q" title={d.query}>{d.query}</code>
                   {d.custom && <span className="dk-tag">custom</span>}
-                  <button className="dk-icon" onClick={() => copy(d.query, `${c}-${i}`)} title="Copy query">{copied === `${c}-${i}` ? '✓' : '⧉'}</button>
+                  <button className="dk-icon" onClick={() => copy(d.query, `${c}-${i}`)} title="Copy query">{copied === `${c}-${i}` ? '' : '⧉'}</button>
                   <a className="dk-open" href={d.url} target="_blank" rel="noreferrer" onClick={() => setMark(d.query, true)}>Open ↗</a>
-                  {d.custom && <button className="dk-icon dk-del" onClick={() => removeDork(d)} title="Delete custom dork">✕</button>}
+                  {d.custom && <button className="dk-icon dk-del" onClick={() => removeDork(d)} title="Delete custom dork"></button>}
                 </div>
               ))}
             </section>

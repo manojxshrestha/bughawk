@@ -4,9 +4,9 @@ import { get, KEYS } from '../../lib/storage.js';
 import { hostOf } from '../../lib/graph.js';
 
 const CAT_META = {
-  frontend: ['🎨', 'Frontend'], backend: ['⚙️', 'Backend'], database: ['🗄️', 'Database'],
-  cms: ['📰', 'CMS'], server: ['🖥️', 'Server'], cdn: ['🌐', 'CDN'], waf: ['🛡️', 'WAF'],
-  cloud: ['☁️', 'Cloud'], analytics: ['📊', 'Analytics / 3rd-party'],
+  frontend: ['', 'Frontend'], backend: ['️', 'Backend'], database: ['️', 'Database'],
+  cms: ['', 'CMS'], server: ['️', 'Server'], cdn: ['', 'CDN'], waf: ['️', 'WAF'],
+  cloud: ['️', 'Cloud'], analytics: ['', 'Analytics / 3rd-party'],
 };
 
 const TechStackTab = memo(function TechStackTab({ records = [], activeProjectId = 'default' }) {
@@ -65,7 +65,7 @@ const TechStackTab = memo(function TechStackTab({ records = [], activeProjectId 
       <style>{styles}</style>
       <header className="ts-head">
         <div>
-          <h1>🧱 Tech Stack Detector</h1>
+          <h1> Tech Stack Detector</h1>
           <p>Fingerprint frontend · backend · server · CDN · WAF · CMS · cloud · DB from a response</p>
         </div>
       </header>

@@ -19,12 +19,12 @@ import { statusGroup } from '../../lib/status.js';
 import { relativeTime } from '../../utils/time.js';
 
 const STAT_DEFS = [
-  { key: 'total', label: 'Total Subdomains', icon: '🌐', accent: 'var(--purple)' },
-  { key: 'live', label: 'Live (2xx)', icon: '✓', accent: 'var(--status-2xx)' },
+  { key: 'total', label: 'Total Subdomains', icon: '', accent: 'var(--purple)' },
+  { key: 'live', label: 'Live (2xx)', icon: '', accent: 'var(--status-2xx)' },
   { key: 'redirects', label: 'Redirects (3xx)', icon: '↪', accent: 'var(--status-3xx)' },
-  { key: 'notable', label: 'Notable (4xx+5xx)', icon: '⚑', accent: 'var(--status-5xx)' },
-  { key: 'vulnerable', label: 'Vulnerable', icon: '☠', accent: 'var(--status-5xx)' },
-  { key: 'flagged', label: 'Flagged', icon: '★', accent: 'var(--status-4xx)' },
+  { key: 'notable', label: 'Notable (4xx+5xx)', icon: '', accent: 'var(--status-5xx)' },
+  { key: 'vulnerable', label: 'Vulnerable', icon: '', accent: 'var(--status-5xx)' },
+  { key: 'flagged', label: 'Flagged', icon: '', accent: 'var(--status-4xx)' },
 ];
 
 function StatCard({ def, value }) {
@@ -84,11 +84,11 @@ function Dashboard({
   const feed = useMemo(() => {
     const items = [];
     for (const a of activity || [])
-      items.push({ id: 's' + a.id, at: a.at, kind: 'subdomains', icon: '🌐', added: a.added, total: a.total, updated: a.updated, skipped: a.skipped });
+      items.push({ id: 's' + a.id, at: a.at, kind: 'subdomains', icon: '', added: a.added, total: a.total, updated: a.updated, skipped: a.skipped });
     for (const a of portActivity || [])
-      items.push({ id: 'p' + a.id, at: a.at, kind: 'ports', icon: '🖧', added: a.added, total: a.total, updated: a.updated, skipped: a.skipped });
+      items.push({ id: 'p' + a.id, at: a.at, kind: 'ports', icon: '', added: a.added, total: a.total, updated: a.updated, skipped: a.skipped });
     for (const a of assetActivity || [])
-      items.push({ id: 'a' + a.id, at: a.at, kind: 'assets', icon: '🗂', label: a.label });
+      items.push({ id: 'a' + a.id, at: a.at, kind: 'assets', icon: '', label: a.label });
     return items.sort((x, y) => y.at - x.at).slice(0, 40);
   }, [activity, portActivity, assetActivity]);
 
@@ -119,7 +119,7 @@ function Dashboard({
       {topWork.length > 0 && (
         <div className="dash-worklist" onClick={() => onNavigate && onNavigate('surface')} title="Open the full Priority Worklist">
           <div className="dash-wl-head">
-            <strong>🎯 Priority Worklist — top {topWork.length}</strong>
+            <strong> Priority Worklist — top {topWork.length}</strong>
             <span className="dash-wl-more">open all →</span>
           </div>
           {topWork.map((it, i) => (
@@ -137,7 +137,7 @@ function Dashboard({
       {coverage.length > 0 && (
         <div className="dash-worklist" onClick={() => onNavigate && onNavigate('notebook')} title="Open the Notebook">
           <div className="dash-wl-head">
-            <strong>🧭 Feature coverage</strong>
+            <strong> Feature coverage</strong>
             <span className="dash-wl-more">open notebook →</span>
           </div>
           <div className="dash-cov">

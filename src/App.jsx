@@ -1,24 +1,27 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import TopBar from './components/Shell/TopBar.jsx';
 import Sidebar from './components/Shell/Sidebar.jsx';
 import CommandPalette from './components/Shell/CommandPalette.jsx';
 import ErrorBoundary from './components/Shell/ErrorBoundary.jsx';
 import ProjectModal from './components/Sidebar/ProjectModal.jsx';
-import Dashboard from './components/Dashboard/Dashboard.jsx';
-import SubdomainTab from './components/SubdomainTab/SubdomainTab.jsx';
-import ReconUrlParser from './components/UrlParser/ReconUrlParser.jsx';
-import JsReconTab from './components/JsRecon/JsReconTab.jsx';
-import PortTab from './components/PortTab/PortTab.jsx';
-import ScopeTab from './components/ScopeTab/ScopeTab.jsx';
-import AssetsTab from './components/AssetsTab/AssetsTab.jsx';
-import SurfaceTab from './components/Surface/SurfaceTab.jsx';
-import WordlistsTab from './components/Wordlists/WordlistsTab.jsx';
-import DorksTab from './components/Dorks/DorksTab.jsx';
-import HttpAnalyzerTab from './components/HttpAnalyzer/HttpAnalyzerTab.jsx';
-import FindingsTab from './components/Findings/FindingsTab.jsx';
-import TechStackTab from './components/TechStack/TechStackTab.jsx';
-import NotebookTab from './components/Notebook/NotebookTab.jsx';
-import SettingsTab from './components/Settings/SettingsTab.jsx';
+
+const Dashboard = lazy(() => import('./components/Dashboard/Dashboard.jsx'));
+const SubdomainTab = lazy(() => import('./components/SubdomainTab/SubdomainTab.jsx'));
+const ReconUrlParser = lazy(() => import('./components/UrlParser/ReconUrlParser.jsx'));
+const JsReconTab = lazy(() => import('./components/JsRecon/JsReconTab.jsx'));
+const PortTab = lazy(() => import('./components/PortTab/PortTab.jsx'));
+const ScopeTab = lazy(() => import('./components/ScopeTab/ScopeTab.jsx'));
+const AssetsTab = lazy(() => import('./components/AssetsTab/AssetsTab.jsx'));
+const SurfaceTab = lazy(() => import('./components/Surface/SurfaceTab.jsx'));
+const WordlistsTab = lazy(() => import('./components/Wordlists/WordlistsTab.jsx'));
+const DorksTab = lazy(() => import('./components/Dorks/DorksTab.jsx'));
+const JwtDecoderTab = lazy(() => import('./components/JwtDecoder/JwtDecoderTab.jsx'));
+const HttpAnalyzerTab = lazy(() => import('./components/HttpAnalyzer/HttpAnalyzerTab.jsx'));
+const FindingsTab = lazy(() => import('./components/Findings/FindingsTab.jsx'));
+const TechStackTab = lazy(() => import('./components/TechStack/TechStackTab.jsx'));
+const NotebookTab = lazy(() => import('./components/Notebook/NotebookTab.jsx'));
+const SettingsTab = lazy(() => import('./components/Settings/SettingsTab.jsx'));
+const ProjectImportModal = lazy(() => import('./components/ProjectImport/ProjectImportModal.jsx'));
 import { useProjects } from './hooks/useProjects.js';
 import { useSubdomains } from './hooks/useSubdomains.js';
 import { usePorts } from './hooks/usePorts.js';
@@ -57,18 +60,12 @@ export default function App() {
   const [findingDraft, setFindingDraft] = useState(null); // prefill carried Notebook -> Findings
   const [modal, setModal] = useState(null);
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [importOpen, setImportOpen] = useState(false);
   const [toast, setToast] = useState(null);
   const [focusNewIds, setFocusNewIds] = useState(null);
 
-  // Tab switch with a perceived-latency log: time from click to two frames
-  // later (i.e. after React commits + the browser paints the new tab).
   const handleTabChange = useCallback((tab) => {
-    if (!import.meta.env?.DEV) { setActiveTab(tab); return; }
-    const t = performance.now();
     setActiveTab(tab);
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      console.log(`[tab:${tab}] visible after ${(performance.now() - t).toFixed(1)}ms`);
-    }));
   }, []);
 
   const viewNew = useCallback((ids) => {
@@ -88,6 +85,13 @@ export default function App() {
   }, [activeId, subs.records, ports.records]);
 
   const showToast = useCallback((msg) => setToast(msg), []);
+
+  // Listen for storage errors and surface them to the user.
+  useEffect(() => {
+    const handler = (e) => showToast(e.detail);
+    window.addEventListener('storage-error', handler);
+    return () => window.removeEventListener('storage-error', handler);
+  }, [showToast]);
 
   // Stable handlers so always-mounted memo'd tabs (JS Recon) don't re-render every tab switch.
   const createFinding = useCallback((d) => { setFindingDraft(d); setActiveTab('findings'); }, []);
@@ -125,22 +129,23 @@ export default function App() {
   const commands = useMemo(() => {
     const tabCmds = [
       { id: 'go-dashboard', icon: '▦', label: 'Go to Dashboard', group: 'navigate', run: () => setActiveTab('dashboard') },
-      { id: 'go-scope', icon: '🎯', label: 'Go to Scope', group: 'navigate', run: () => setActiveTab('scope') },
-      { id: 'go-subdomains', icon: '🌐', label: 'Go to Subdomains', group: 'navigate', run: () => setActiveTab('subdomains') },
-      { id: 'go-ports', icon: '🖧', label: 'Go to Port Scan', group: 'navigate', run: () => setActiveTab('ports') },
-      { id: 'go-urlparser', icon: '🔗', label: 'Go to URL Parser', group: 'navigate', run: () => setActiveTab('urlparser') },
-      { id: 'go-jsrecon', icon: '🔎', label: 'Go to JS Recon', group: 'navigate', run: () => setActiveTab('jsrecon') },
-      { id: 'go-surface', icon: '🕸', label: 'Go to Attack Surface', group: 'navigate', run: () => setActiveTab('surface') },
-      { id: 'go-httpanalyzer', icon: '🧪', label: 'Go to HTTP Analyzer', group: 'navigate', run: () => setActiveTab('httpanalyzer') },
-      { id: 'go-techstack', icon: '🧱', label: 'Go to Tech Stack', group: 'navigate', run: () => setActiveTab('techstack') },
-      { id: 'go-findings', icon: '📝', label: 'Go to Findings', group: 'navigate', run: () => setActiveTab('findings') },
-      { id: 'go-notebook', icon: '📓', label: 'Go to Notebook', group: 'navigate', run: () => setActiveTab('notebook') },
-      { id: 'go-settings', icon: '⚙', label: 'Go to Settings', group: 'navigate', run: () => setActiveTab('settings') },
-      { id: 'go-assets', icon: '🗂', label: 'Go to Assets', group: 'navigate', run: () => setActiveTab('assets') },
-      { id: 'go-wordlists', icon: '📚', label: 'Go to Wordlists', group: 'navigate', run: () => setActiveTab('wordlists') },
-      { id: 'go-dorks', icon: '🐙', label: 'Go to GitHub Dorks', group: 'navigate', run: () => setActiveTab('dorks') },
+      { id: 'go-scope', label: 'Go to Scope', group: 'navigate', run: () => setActiveTab('scope') },
+      { id: 'go-subdomains', label: 'Go to Subdomains', group: 'navigate', run: () => setActiveTab('subdomains') },
+      { id: 'go-ports', label: 'Go to Port Scan', group: 'navigate', run: () => setActiveTab('ports') },
+      { id: 'go-urlparser', label: 'Go to URL Parser', group: 'navigate', run: () => setActiveTab('urlparser') },
+      { id: 'go-jsrecon', label: 'Go to JS Recon', group: 'navigate', run: () => setActiveTab('jsrecon') },
+      { id: 'go-surface', label: 'Go to Attack Surface', group: 'navigate', run: () => setActiveTab('surface') },
+      { id: 'go-jwt', label: 'Go to JWT Decoder', group: 'navigate', run: () => setActiveTab('jwt') },
+      { id: 'go-httpanalyzer', label: 'Go to HTTP Analyzer', group: 'navigate', run: () => setActiveTab('httpanalyzer') },
+      { id: 'go-techstack', label: 'Go to Tech Stack', group: 'navigate', run: () => setActiveTab('techstack') },
+      { id: 'go-findings', label: 'Go to Findings', group: 'navigate', run: () => setActiveTab('findings') },
+      { id: 'go-notebook', label: 'Go to Notebook', group: 'navigate', run: () => setActiveTab('notebook') },
+      { id: 'go-assets', label: 'Go to Assets', group: 'navigate', run: () => setActiveTab('assets') },
+      { id: 'go-wordlists', label: 'Go to Wordlists', group: 'navigate', run: () => setActiveTab('wordlists') },
+      { id: 'go-dorks', label: 'Go to GitHub Dorks', group: 'navigate', run: () => setActiveTab('dorks') },
     ];
     const actionCmds = [
+      { id: 'import-project', icon: '+', label: 'Import project zip', group: 'action', run: () => setImportOpen(true) },
       { id: 'new-project', icon: '＋', label: 'Create new project', group: 'action', run: () => setModal({ mode: 'create' }) },
       { id: 'toggle-theme', icon: '◐', label: 'Toggle theme', group: 'action', run: toggleTheme },
     ];
@@ -170,6 +175,7 @@ export default function App() {
         onOpenPalette={() => setPaletteOpen(true)}
         theme={theme}
         onToggleTheme={toggleTheme}
+        onImport={() => setImportOpen(true)}
       />
 
       <div className="layout">
@@ -197,7 +203,8 @@ export default function App() {
             <div className="loading-state">Loading project data…</div>
           ) : (
             <ErrorBoundary resetKey={activeTab}>
-              <div style={{ display: activeTab === 'dashboard' ? 'block' : 'none' }}>
+              <Suspense fallback={<div className="loading-state">Loading…</div>}>
+              {activeTab === 'dashboard' && (
                 <Dashboard
                   activeProjectId={activeId}
                   records={subs.records}
@@ -215,7 +222,7 @@ export default function App() {
                   portActivity={ports.activity}
                   assetActivity={assets.activity}
                 />
-              </div>
+              )}
               {activeTab === 'scope' && (
                 <ScopeTab
                   rules={scopeRules}
@@ -225,21 +232,20 @@ export default function App() {
                   onCopyToast={showToast}
                 />
               )}
-              <div
-                className="tab-pane-fill"
-                style={{ display: activeTab === 'subdomains' ? 'flex' : 'none' }}
-              >
-                <SubdomainTab
-                  subs={subs}
-                  onCopyToast={showToast}
-                  keywords={keywords}
-                  onSaveKeywords={setKeywords}
-                  focusNewIds={focusNewIds}
-                  onClearFocusNew={clearFocusNew}
-                  scopeStatus={scopeStatus}
-                  hasScope={scopeRules.length > 0}
-                />
-              </div>
+              {activeTab === 'subdomains' && (
+                <div className="tab-pane-fill">
+                  <SubdomainTab
+                    subs={subs}
+                    onCopyToast={showToast}
+                    keywords={keywords}
+                    onSaveKeywords={setKeywords}
+                    focusNewIds={focusNewIds}
+                    onClearFocusNew={clearFocusNew}
+                    scopeStatus={scopeStatus}
+                    hasScope={scopeRules.length > 0}
+                  />
+                </div>
+              )}
               {activeTab === 'ports' && (
                 <PortTab
                   ports={ports}
@@ -255,16 +261,16 @@ export default function App() {
                   }}
                 />
               )}
-              <div style={{ display: activeTab === 'urlparser' ? 'block' : 'none' }}>
-                <ReconUrlParser activeProjectId={activeId} active={activeTab === 'urlparser'} />
-              </div>
-              <div style={{ display: activeTab === 'jsrecon' ? 'block' : 'none' }}>
+              {activeTab === 'urlparser' && (
+                <ReconUrlParser activeProjectId={activeId} active />
+              )}
+              {activeTab === 'jsrecon' && (
                 <JsReconTab
                   activeProjectId={activeId}
                   onCreateFinding={createFinding}
                   onSendToSubdomains={sendToSubdomains}
                 />
-              </div>
+              )}
               {activeTab === 'surface' && (
                 <SurfaceTab
                   activeProjectId={activeId}
@@ -277,6 +283,7 @@ export default function App() {
                 <WordlistsTab techHints={[...new Set(subs.records.flatMap((r) => r.tech || []))]} />
               )}
               {activeTab === 'dorks' && <DorksTab defaultTarget={activeProject?.name || ''} />}
+              {activeTab === 'jwt' && <JwtDecoderTab />}
               {activeTab === 'httpanalyzer' && <HttpAnalyzerTab />}
               {activeTab === 'techstack' && <TechStackTab records={subs.records} activeProjectId={activeId} />}
               {activeTab === 'findings' && (
@@ -318,6 +325,7 @@ export default function App() {
                   onWipeProject={() => subs.clearAll()}
                 />
               )}
+            </Suspense>
             </ErrorBoundary>
           )}
         </main>
@@ -333,6 +341,17 @@ export default function App() {
       )}
 
       {paletteOpen && <CommandPalette commands={commands} onClose={() => setPaletteOpen(false)} />}
+
+      {importOpen && (
+        <Suspense fallback={null}>
+          <ProjectImportModal
+            activeProjectId={activeId}
+            onNavigate={setActiveTab}
+            onClose={() => setImportOpen(false)}
+            onToast={showToast}
+          />
+        </Suspense>
+      )}
 
       {toast && <div className="copy-toast">{toast}</div>}
     </div>

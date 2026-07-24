@@ -50,7 +50,7 @@ export default function ProjectSwitcher({
               : `${(activeProject?.subdomainCount || 0).toLocaleString()} hosts`}
           </span>
         </span>
-        {!empty && <span className="proj-caret">▾</span>}
+        {!empty && <span className="proj-caret"></span>}
       </button>
 
       {open && !empty && (
@@ -80,7 +80,7 @@ export default function ProjectSwitcher({
                     setOpen(false);
                   }}
                 >
-                  ✎
+                  
                 </button>
                 <button
                   className="btn btn-icon"
@@ -90,7 +90,7 @@ export default function ProjectSwitcher({
                     setOpen(false);
                   }}
                 >
-                  🗑
+                  
                 </button>
               </span>
             </div>

@@ -1,6 +1,6 @@
 import { memo, useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { get, set, KEYS } from '../../lib/storage.js';
-import { getSevColor } from '../UrlParser/engine.js';
+
 import { FEATURES, featureLabel, suggestTechniques, featuresByHost } from '../../lib/features.js';
 
 // note = { id, host, features:[{name,status}], tags, body, pinned, created, updated }.
@@ -132,7 +132,7 @@ const NotebookTab = memo(function NotebookTab({ hosts = [], activeProjectId = 'd
           </button>
         );
       })}
-      {source && <button className="nb-btn-sm" onClick={() => autoDetect(setter, source)} title="Detect features from parsed URLs">✨ Auto-detect</button>}
+      {source && <button className="nb-btn-sm" onClick={() => autoDetect(setter, source)} title="Detect features from parsed URLs"> Auto-detect</button>}
     </div>
   );
 
@@ -141,7 +141,7 @@ const NotebookTab = memo(function NotebookTab({ hosts = [], activeProjectId = 'd
       <style>{styles}</style>
       <header className="nb-head">
         <div>
-          <h1>📓 Notebook</h1>
+          <h1> Notebook</h1>
           <p>{notes.length} notes · {Object.keys(noteByHost).length} hosts · feature → attack mapping</p>
         </div>
       </header>
@@ -203,7 +203,7 @@ const NotebookTab = memo(function NotebookTab({ hosts = [], activeProjectId = 'd
           <div key={n.id} className={`nb-card ${n.pinned ? 'pinned' : ''} ${viewing === n.id ? 'active' : ''}`}>
             <div className="nb-card-top">
               <span className="nb-host-title">{n.host || 'general'}</span>
-              <button className="nb-pin" onClick={() => togglePin(n.id)}>{n.pinned ? '📌' : '📍'}</button>
+              <button className="nb-pin" onClick={() => togglePin(n.id)}>{n.pinned ? '' : ''}</button>
             </div>
             <div className="nb-feat-row">
               {n.features.map((f) => (
@@ -215,7 +215,7 @@ const NotebookTab = memo(function NotebookTab({ hosts = [], activeProjectId = 'd
             </div>
             {n.body && <pre className="nb-body">{n.body}</pre>}
             <div className="nb-card-actions">
-              <button className="nb-btn-sm nb-view" onClick={() => openView(n)}>👁 View</button>
+              <button className="nb-btn-sm nb-view" onClick={() => openView(n)}> View</button>
               {n.host && n.features[0] && <button className="nb-btn-sm" onClick={() => createFinding(n.host, n.features[0].name)}>→ Finding</button>}
               <button className="nb-btn-sm nb-danger" onClick={() => remove(n.id)}>Delete</button>
             </div>
@@ -227,7 +227,7 @@ const NotebookTab = memo(function NotebookTab({ hosts = [], activeProjectId = 'd
         <div className="nb-drawer">
           <div className="nb-drawer-head">
             <strong>{draft.host || 'note'}</strong>
-            <button className="nb-btn-sm" onClick={() => setViewing(null)}>✕ Close</button>
+            <button className="nb-btn-sm" onClick={() => setViewing(null)}> Close</button>
           </div>
           <input className="nb-in" list="nb-hosts" placeholder="subdomain" value={draft.host} onChange={(e) => setDraft((d) => ({ ...d, host: e.target.value }))} />
           <div className="nb-feat-label">Features — click to toggle, again to cycle status</div>

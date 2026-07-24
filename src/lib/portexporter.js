@@ -81,9 +81,9 @@ export function exportMarkdown(records, projectName = 'target', base = 'port-rep
       lines.push(`### ${r.port}/${r.proto} — ${svc}  \`[${e.severity}]\``);
       lines.push('');
       lines.push(`- **State:** ${r.state}`);
-      if (e.dangerousFlags.length) lines.push(`- **⚠ Dangerous config:** ${e.dangerousFlags.join('; ')}`);
+      if (e.dangerousFlags.length) lines.push(`- ** Dangerous config:** ${e.dangerousFlags.join('; ')}`);
       if (e.anomalies.length) lines.push(`- **Anomaly:** ${e.anomalies.join('; ')}`);
-      if (r.kev) lines.push(`- **🔥 CISA KEV:** actively exploited in the wild`);
+      if (r.kev) lines.push(`- ** CISA KEV:** actively exploited in the wild`);
       if (r.cves && r.cves.length) {
         const top = r.cves.slice(0, 5).map((c) => `${c.id}${c.cvss ? ` (CVSS ${c.cvss})` : ''}`).join(', ');
         lines.push(`- **CVEs:** ${top}`);

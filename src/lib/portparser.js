@@ -14,8 +14,6 @@
 //
 // A blob may mix formats; lines that match nothing are skipped (counted).
 
-const STATES = new Set(['open', 'closed', 'filtered', 'open|filtered', 'closed|filtered', 'unfiltered']);
-
 // Strip scheme/path/port and lowercase. Keeps IPs and hostnames intact.
 export function normalizeHost(raw) {
   if (!raw) return '';

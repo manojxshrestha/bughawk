@@ -87,7 +87,7 @@ const WordlistsTab = memo(function WordlistsTab({ techHints = [] }) {
           .map((l) => ({ id: l.id || `wl_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`, name: l.name || 'imported', category: l.category || '', variant: l.variant || '', content: l.content, lines: l.lines ?? lineCount(l.content), preview: l.preview }));
         persist([...lists, ...incoming].map(withMeta));
         alert(`Imported ${incoming.length} wordlist(s).`);
-      } catch (err) {
+      } catch {
         alert('Invalid wordlists .json file.');
       }
     };
@@ -204,19 +204,19 @@ const WordlistsTab = memo(function WordlistsTab({ techHints = [] }) {
 
       <header className="wlt-head">
         <div>
-          <h1>📚 Wordlists</h1>
+          <h1> Wordlists</h1>
           <p>{lists.length} lists · {categories.length} categories · {totalLines.toLocaleString()} total lines · {stats.uniqueEntries.toLocaleString()} unique · {stats.sharedEntries.toLocaleString()} shared</p>
         </div>
       </header>
 
       {suggested.length > 0 && (
         <section className="wlt-panel wlt-pad wlt-suggest">
-          <strong>🎯 Suggested for this target</strong>
+          <strong> Suggested for this target</strong>
           <span className="wlt-suggest-tech">stack: {[...new Set(techHints)].slice(0, 8).join(', ')}</span>
           <div className="wlt-suggest-chips">
             {suggested.map((l) => (
               <button key={l.id} className="wlt-suggest-chip" onClick={() => copy(l)} title={`Copy ${l.name} (${(l.lines || 0).toLocaleString()} lines)`}>
-                {copied === l.id ? '✓ ' : '📋 '}{l.name} <em>{l.category}</em>
+                {copied === l.id ? ' ' : ' '}{l.name} <em>{l.category}</em>
               </button>
             ))}
           </div>
@@ -248,7 +248,7 @@ const WordlistsTab = memo(function WordlistsTab({ techHints = [] }) {
           <span className="wlt-count">{formLines.toLocaleString()} lines</span>
           <label className="wlt-toggle"><input type="checkbox" checked={clean.dedup} onChange={() => setClean((c) => ({ ...c, dedup: !c.dedup }))} /> dedup</label>
           <label className="wlt-toggle"><input type="checkbox" checked={clean.sort} onChange={() => setClean((c) => ({ ...c, sort: !c.sort }))} /> sort</label>
-          <button className="wlt-btn" onClick={() => fileRef.current.click()}>📂 Import file</button>
+          <button className="wlt-btn" onClick={() => fileRef.current.click()}> Import file</button>
           <input type="file" ref={fileRef} style={{ display: 'none' }} accept=".txt,.lst,.dic" onChange={importFile} />
           {editingId && <button className="wlt-btn" onClick={resetForm}>Cancel</button>}
           <button className="wlt-btn wlt-primary" onClick={save}>{editingId ? 'Update' : 'Save'}</button>
@@ -280,7 +280,7 @@ const WordlistsTab = memo(function WordlistsTab({ techHints = [] }) {
                 </div>
                 <pre className="wlt-preview">{l.preview}{(l.lines || 0) > 6 ? '\n…' : ''}</pre>
                 <div className="wlt-card-actions">
-                  <button className="wlt-btn-sm" onClick={() => copy(l)}>{copied === l.id ? '✓ Copied' : 'Copy'}</button>
+                  <button className="wlt-btn-sm" onClick={() => copy(l)}>{copied === l.id ? ' Copied' : 'Copy'}</button>
                   <button className="wlt-btn-sm" onClick={() => exportOne(l)}>Export</button>
                   <button className="wlt-btn-sm" onClick={() => edit(l)}>Edit</button>
                   <button className="wlt-btn-sm wlt-danger" onClick={() => remove(l.id)}>Delete</button>

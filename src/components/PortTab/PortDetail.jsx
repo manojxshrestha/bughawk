@@ -30,12 +30,12 @@ export default function PortDetail({ rec, onClose, onCopy, onSendToSubdomains })
               {rec.ip && rec.ip !== rec.host ? ` · ${rec.ip}` : ''}
             </div>
           </div>
-          <button className="btn btn-ghost btn-sm" onClick={onClose}>✕</button>
+          <button className="btn btn-ghost btn-sm" onClick={onClose}></button>
         </header>
 
         <div className="drawer-body">
           {e.dangerousFlags.length > 0 && (
-            <Section title="⚠ Dangerous configuration">
+            <Section title=" Dangerous configuration">
               {e.dangerousFlags.map((f) => (
                 <div key={f} className="danger-flag">{f}</div>
               ))}
@@ -60,7 +60,7 @@ export default function PortDetail({ rec, onClose, onCopy, onSendToSubdomains })
             )}
           </Section>
 
-          <Section title={`CVEs ${rec.kev ? '· 🔥 KEV (actively exploited)' : ''}`}>
+          <Section title={`CVEs ${rec.kev ? '·  KEV (actively exploited)' : ''}`}>
             {rec.cveFetchedAt == null ? (
               <div className="detail-empty">Not looked up yet — run “Lookup CVEs” from the toolbar.</div>
             ) : !rec.cves || rec.cves.length === 0 ? (
@@ -91,12 +91,12 @@ export default function PortDetail({ rec, onClose, onCopy, onSendToSubdomains })
                       {!cert.expired && cert.expiringSoon && <span className="tls-flag warn"> {cert.daysLeft}d left</span>}
                     </div>
                   )}
-                  {cert.selfSigned && <div className="tls-flag bad">⚠ Self-signed certificate</div>}
+                  {cert.selfSigned && <div className="tls-flag bad"> Self-signed certificate</div>}
                   {cert.wildcard && <div className="tls-flag warn">Wildcard certificate</div>}
                 </>
               )}
               {weak.length > 0 && (
-                <div className="tls-flag bad">⚠ Weak TLS: {weak.join(', ')}</div>
+                <div className="tls-flag bad"> Weak TLS: {weak.join(', ')}</div>
               )}
               {cert && cert.sans.length > 0 && (
                 <div className="san-block">

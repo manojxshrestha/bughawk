@@ -55,7 +55,7 @@ export default function LoginGate({ children }) {
       <Galaxy speed={1.7} density={1.5} />
       <h1 className="lg-hero"><SplitText text="Welcome, Eagle" delay={120} /></h1>
       <form className="lg-card" onSubmit={setup ? onSetup : onLogin}>
-        <div className="lg-logo">🦅</div>
+        <div className="lg-logo"></div>
         <h1 className="lg-title">{setup ? 'Create your login' : 'Welcome back'}</h1>
         <p className="lg-sub">{setup ? 'Set a username & password to lock this workspace.' : 'Enter your credentials to continue.'}</p>
 

@@ -3,33 +3,27 @@
 
 // ════════════════════════════════ GitHub ════════════════════════════════
 const SECRETS = [
-  '{T} password', '{T} "password"', '{T} passwd', '{T} "db_password"', '{T} "DB_PASSWORD"',
-  '{T} "database_password"', '{T} "admin_password"', '{T} "root_password"', '{T} "secret"',
-  '{T} "client_secret"', '{T} "secret_key"', '{T} "SECRET_KEY"', '{T} "api_secret"',
-  '{T} "passphrase"', '{T} "hardcoded"', '{T} "do not commit"', '{T} "remove before"',
-  '{T} "pwd ="', '{T} "pass ="', '{T} "credentials ="', '{T} "login" "password"',
-  '{T} "user" "password" NOT example', '{T} "sa_password"', '{T} "ftp_password"',
-  '{T} "smtp_password"', '{T} "ldap_password"', '{T} "vnc password"', '{T} "BasicAuth"',
-  '{T} "x-functions-key"', '{T} "shared_secret"', '{T} "master_key"', '{T} "encryption_key"',
-  '{T} "signing_key"', '{T} "cookie_secret"', '{T} "session_secret"', '{T} "jwt_secret"',
+  '{T} "db_password"', '{T} "DB_PASSWORD"', '{T} "database_password"', '{T} "admin_password"',
+  '{T} "root_password"', '{T} "client_secret"', '{T} "secret_key"', '{T} "SECRET_KEY"',
+  '{T} "api_secret"', '{T} "sa_password"', '{T} "ftp_password"', '{T} "smtp_password"',
+  '{T} "ldap_password"', '{T} "vnc password"', '{T} "BasicAuth"', '{T} "x-functions-key"',
+  '{T} "shared_secret"', '{T} "master_key"', '{T} "encryption_key"', '{T} "signing_key"',
+  '{T} "cookie_secret"', '{T} "session_secret"', '{T} "jwt_secret"',
 ];
 
 const APIKEYS = [
-  '{T} "api_key"', '{T} "apikey"', '{T} "x-api-key"', '{T} "API_KEY="', '{T} "access_token"',
-  '{T} "auth_token"', '{T} "refresh_token"', '{T} "bearer "', '{T} "Authorization: Bearer"',
-  '{T} "token ="', '{T} "accessKeyId"', '{T} "ConsumerKey"', '{T} "consumer_secret"',
-  '{T} "personal_access_token"', '{T} "PRIVATE-TOKEN"', '{T} "X-Auth-Token"', '{T} "id_token"',
-  '{T} "client_id" "client_secret"', '{T} "oauth_token"', '{T} "oauth" secret', '{T} "BEARER_TOKEN"',
+  '{T} "api_key"', '{T} "apikey"', '{T} "x-api-key"', '{T} "API_KEY="',
+  '{T} "Authorization: Bearer"', '{T} "accessKeyId"', '{T} "ConsumerKey"', '{T} "consumer_secret"',
+  '{T} "X-Auth-Token"', '{T} "id_token"', '{T} "client_id" "client_secret"', '{T} "oauth_token"',
   '{T} "Token token="', '{T} "ApiToken"', '{T} "service account" key',
 ];
 
 const PRIVATE_KEYS = [
   '{T} "BEGIN RSA PRIVATE KEY"', '{T} "BEGIN OPENSSH PRIVATE KEY"', '{T} "BEGIN DSA PRIVATE KEY"',
   '{T} "BEGIN EC PRIVATE KEY"', '{T} "BEGIN PGP PRIVATE KEY"', '{T} "BEGIN PRIVATE KEY"',
-  '{T} "BEGIN ENCRYPTED PRIVATE KEY"', '{T} "ssh-rsa AAAA"', '{T} "id_rsa"', '{T} "id_dsa"',
-  '{T} "id_ed25519"', '{T} "PRIVATE KEY" extension:pem', '{T} extension:ppk', '{T} extension:pfx',
-  '{T} extension:p12', '{T} extension:keystore', '{T} extension:jks', '{T} extension:asc PGP',
-  '{T} "-----BEGIN CERTIFICATE-----" extension:key', '{T} "BEGIN OPENSSH" filename:id_rsa',
+  '{T} "BEGIN ENCRYPTED PRIVATE KEY"', '{T} "id_rsa"',
+  '{T} "PRIVATE KEY" extension:pem',
+  '{T} "-----BEGIN CERTIFICATE-----" extension:key',
 ];
 
 const AWS = [
@@ -99,26 +93,14 @@ const IAC = [
 
 const FILES = [
   '{T} filename:.env', '{T} filename:.env.local', '{T} filename:.env.production',
-  '{T} filename:.env.development', '{T} filename:.env.staging', '{T} filename:.env.backup',
-  '{T} filename:credentials', '{T} filename:.git-credentials', '{T} filename:.s3cfg',
-  '{T} filename:wp-config.php', '{T} filename:config.php password', '{T} filename:settings.py SECRET_KEY',
-  '{T} filename:database.yml password', '{T} filename:.htpasswd', '{T} filename:.pgpass',
-  '{T} filename:.netrc', '{T} filename:.bash_history', '{T} filename:.zsh_history',
+  '{T} filename:.env.development', '{T} filename:.env.staging', '{T} filename:.git-credentials',
+  '{T} filename:wp-config.php', '{T} filename:.htpasswd', '{T} filename:.pgpass',
   '{T} filename:secrets.yml', '{T} filename:secrets.json', '{T} filename:credentials.json',
-  '{T} filename:application.properties password', '{T} filename:application.yml password',
   '{T} filename:web.config', '{T} filename:appsettings.json ConnectionStrings',
-  '{T} filename:config.json apiKey', '{T} filename:local.settings.json', '{T} filename:.env.vault',
-  '{T} filename:sftp-config.json', '{T} filename:.aws/credentials', '{T} filename:.boto',
-  '{T} filename:proftpdpasswd', '{T} filename:filezilla.xml', '{T} filename:.ovpn auth',
+  '{T} filename:config.json apiKey',
 ];
 
-const BACKUPS = [
-  '{T} extension:sql password', '{T} extension:sql "INSERT INTO users"', '{T} extension:sql "GRANT ALL"',
-  '{T} extension:bak', '{T} extension:dump', '{T} extension:backup', '{T} extension:old config',
-  '{T} extension:kdbx', '{T} extension:log password', '{T} extension:log "api_key"',
-  '{T} "mysqldump" password', '{T} "pg_dump"', '{T} "database backup"', '{T} extension:gz dump',
-  '{T} extension:csv "password"', '{T} extension:xlsx password',
-];
+
 
 const DB = [
   '{T} "jdbc:mysql://"', '{T} "jdbc:postgresql://"', '{T} "jdbc:oracle:"', '{T} "jdbc:sqlserver"',
@@ -138,21 +120,12 @@ const ENDPOINTS = [
   '{T} "127.0.0.1" "password"', '{T} "169.254.169.254"',
 ];
 
-const INTERNAL = [
-  '{T} internal', '{T} staging password', '{T} "dev" password', '{T} "TODO" password',
-  '{T} "FIXME" key', '{T} "vault" token', '{T} "VPN" config', '{T} "smtp" password',
-  '{T} "ftp" password', '{T} "ldap" password', '{T} "confidential"', '{T} "do not share"',
-  '{T} "test" credentials NOT example', '{T} "sandbox" secret', '{T} "poc" password',
-];
-
 const ORG = [
-  'org:{ORG} filename:.env', 'org:{ORG} "password"', 'org:{ORG} "api_key"', 'org:{ORG} "secret"',
-  'org:{ORG} "client_secret"', 'org:{ORG} "AKIA"', 'org:{ORG} "AIza"', 'org:{ORG} "sk_live_"',
-  'org:{ORG} "sk-ant-"', 'org:{ORG} "T3BlbkFJ"', 'org:{ORG} filename:.npmrc', 'org:{ORG} "ghp_"',
-  'org:{ORG} "glpat-"', 'org:{ORG} "BEGIN RSA PRIVATE KEY"', 'org:{ORG} "BEGIN OPENSSH PRIVATE KEY"',
-  'org:{ORG} extension:sql password', 'org:{ORG} extension:tfstate', 'org:{ORG} "token"',
-  'org:{ORG} filename:credentials', 'org:{ORG} "internal"', 'org:{ORG} "DATABASE_URL"',
-  'org:{ORG} "connectionString"', 'org:{ORG} "xoxb-"', 'org:{ORG} "whsec_"',
+  'org:{ORG} filename:.env', 'org:{ORG} "api_key"', 'org:{ORG} "client_secret"', 'org:{ORG} "AKIA"',
+  'org:{ORG} "AIza"', 'org:{ORG} "sk_live_"', 'org:{ORG} "sk-ant-"', 'org:{ORG} "T3BlbkFJ"',
+  'org:{ORG} filename:.npmrc', 'org:{ORG} "ghp_"', 'org:{ORG} "glpat-"',
+  'org:{ORG} "BEGIN RSA PRIVATE KEY"', 'org:{ORG} "BEGIN OPENSSH PRIVATE KEY"',
+  'org:{ORG} extension:tfstate', 'org:{ORG} "xoxb-"', 'org:{ORG} "whsec_"',
 ];
 
 const GROUPS = [
@@ -167,10 +140,8 @@ const GROUPS = [
   ['CI / CD & DevOps', CICD],
   ['Infrastructure as Code', IAC],
   ['Config & Env Files', FILES],
-  ['Backups & Dumps', BACKUPS],
   ['DB / Connection Strings', DB],
   ['Endpoints & API', ENDPOINTS],
-  ['Internal / Misc', INTERNAL],
   ['Org-scoped', ORG],
 ];
 

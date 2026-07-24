@@ -8,9 +8,9 @@ import StatusBadge from '../SubdomainTab/StatusBadge.jsx';
 // detection, and full-vault JSON backup.
 
 const SECTIONS = [
-  { key: 'subdomains', label: 'Subdomains', icon: '🌐', ph: 'Paste subdomains, one per line…' },
-  { key: 'urls', label: 'URLs', icon: '🔗', ph: 'Paste URLs, one per line…' },
-  { key: 'jsfiles', label: 'JS Files', icon: '📜', ph: 'Paste .js file URLs, one per line…' },
+  { key: 'subdomains', label: 'Subdomains', icon: '', ph: 'Paste subdomains, one per line…' },
+  { key: 'urls', label: 'URLs', icon: '', ph: 'Paste URLs, one per line…' },
+  { key: 'jsfiles', label: 'JS Files', icon: '', ph: 'Paste .js file URLs, one per line…' },
 ];
 const RENDER_CAP = 1000;
 const EMPTY = { subdomains: [], urls: [], jsfiles: [], seen: {}, activity: [] };
@@ -113,7 +113,7 @@ export default function AssetsTab({ assets, onSave, onCopyToast, subRecords, onS
           <p>Store raw subdomains, URLs &amp; JS links. Auto-routes, dedupes, and feeds your other tabs.</p>
         </div>
         <div className="asset-head-actions">
-          <button className="btn btn-ghost btn-sm" onClick={() => setSmartOpen((o) => !o)}>✦ Smart import</button>
+          <button className="btn btn-ghost btn-sm" onClick={() => setSmartOpen((o) => !o)}> Smart import</button>
           <VaultMenu data={data} onImport={importVault} onCopyToast={onCopyToast} />
         </div>
       </div>
@@ -128,7 +128,7 @@ export default function AssetsTab({ assets, onSave, onCopyToast, subRecords, onS
           </button>
         ))}
         <button className={`asset-tab${active === 'ips' ? ' active' : ''}`} onClick={() => setActive('ips')}>
-          <span>🖥 IPs</span>
+          <span> IPs</span>
           <span className="asset-tab-count">{ipCount.toLocaleString()}</span>
         </button>
       </div>
@@ -305,7 +305,7 @@ function AssetBucket({ section, items, seenAt, onSave, onMarkSeen, appendTo, onC
         <div className="glass-card empty-state">
           <div className="empty-icon">{section.icon}</div>
           <div className="empty-title">No {section.label.toLowerCase()} stored yet</div>
-          <div className="empty-sub">Paste above, or use ✦ Smart import to auto-sort a mixed list.</div>
+          <div className="empty-sub">Paste above, or use  Smart import to auto-sort a mixed list.</div>
         </div>
       ) : (
         <>
@@ -351,7 +351,7 @@ function AssetBucket({ section, items, seenAt, onSave, onMarkSeen, appendTo, onC
                   {scope && <span className={`scope-badge sm ${scope}`}>{scope}</span>}
                   <span className="filter-spacer" />
                   <button className="icon-btn" title="Copy" onClick={() => navigator.clipboard?.writeText(it.v).then(() => onCopyToast?.('Copied'))}>⧉</button>
-                  <button className="icon-btn" title="Remove" onClick={() => removeVals(new Set([it.v]))}>✕</button>
+                  <button className="icon-btn" title="Remove" onClick={() => removeVals(new Set([it.v]))}></button>
                 </div>
               );
             })}
@@ -371,7 +371,7 @@ function AssetBucket({ section, items, seenAt, onSave, onMarkSeen, appendTo, onC
             <button key={s.key} className="btn btn-ghost btn-sm" onClick={() => moveChecked(s.key)}>→ {s.label}</button>
           ))}
           <button className="btn btn-ghost btn-sm" style={{ color: 'var(--status-5xx)' }} onClick={() => { removeVals(checked); setChecked(new Set()); }}>Delete</button>
-          <button className="btn btn-ghost btn-sm" onClick={() => setChecked(new Set())}>Clear ✕</button>
+          <button className="btn btn-ghost btn-sm" onClick={() => setChecked(new Set())}>Clear </button>
         </div>
       )}
     </>
@@ -412,7 +412,7 @@ function IpsView({ subRecords, onCopyToast }) {
   if (subRecords.length === 0 || groups.length === 0) {
     return (
       <div className="glass-card empty-state">
-        <div className="empty-icon">🖥</div>
+        <div className="empty-icon"></div>
         <div className="empty-title">No IPs yet</div>
         <div className="empty-sub">Import subdomains with an IP column in the Subdomains tab — they’ll group here by status code.</div>
       </div>
@@ -461,7 +461,7 @@ function NormalizeMenu({ onNormalize }) {
   const opt = (label, opts) => <button className="menu-item" onClick={() => { onNormalize(opts); close(); }}>{label}</button>;
   return (
     <div className="menu">
-      <button className="btn btn-ghost btn-sm" onClick={() => setOpen((o) => !o)}>Normalize ▾</button>
+      <button className="btn btn-ghost btn-sm" onClick={() => setOpen((o) => !o)}>Normalize </button>
       {open && (
         <div className="menu-list" onMouseLeave={close}>
           {opt('Lowercase', { lowercase: true })}
@@ -483,10 +483,10 @@ function ActionsMenu({ sectionKey, isUrlish, onDetectDead, onExtractHosts, onSen
   const item = (label, fn, style) => <button className="menu-item" style={style} onClick={() => { fn(); close(); }}>{label}</button>;
   return (
     <div className="menu">
-      <button className="btn btn-ghost btn-sm" onClick={() => setOpen((o) => !o)}>Actions ▾</button>
+      <button className="btn btn-ghost btn-sm" onClick={() => setOpen((o) => !o)}>Actions </button>
       {open && (
         <div className="menu-list" onMouseLeave={close}>
-          {isUrlish && item('🩺 Detect dead endpoints', onDetectDead)}
+          {isUrlish && item(' Detect dead endpoints', onDetectDead)}
           {isUrlish && item('Extract hosts → Subdomains bucket', onExtractHosts)}
           {sectionKey === 'subdomains' && onSendToSubTab && item('Send to Subdomains tab (scan)', onSendToSubTab)}
           {sectionKey === 'subdomains' && item('Pull from Subdomains tab', onPullFromSubTab)}
@@ -523,7 +523,7 @@ function VaultMenu({ data, onImport, onCopyToast }) {
   };
   return (
     <div className="menu">
-      <button className="btn btn-ghost btn-sm" onClick={() => setOpen((o) => !o)}>Vault ▾</button>
+      <button className="btn btn-ghost btn-sm" onClick={() => setOpen((o) => !o)}>Vault </button>
       {open && (
         <div className="menu-list" onMouseLeave={close}>
           <button className="menu-item" onClick={exportVault}>Export vault (.json)</button>

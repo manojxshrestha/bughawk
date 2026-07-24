@@ -56,12 +56,18 @@ function db() {
   return dbPromise;
 }
 
+function emitError(msg) {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('storage-error', { detail: msg }));
+  }
+}
+
 export async function get(key, fallback = null) {
   try {
     const val = await (await db()).get(STORE, key);
     return val === undefined ? fallback : val;
   } catch (e) {
-    console.error('storage.get failed', key, e);
+    emitError(`Failed to read data. ${e.message}`);
     return fallback;
   }
 }
@@ -71,7 +77,7 @@ export async function set(key, value) {
     await (await db()).put(STORE, value, key);
     return true;
   } catch (e) {
-    console.error('storage.set failed', key, e);
+    emitError(`Failed to save data. ${e.message}`);
     return false;
   }
 }
@@ -84,7 +90,7 @@ export async function setMany(entries) {
     await tx.done;
     return true;
   } catch (e) {
-    console.error('storage.setMany failed', e);
+    emitError(`Failed to save batch data. ${e.message}`);
     return false;
   }
 }
@@ -93,7 +99,7 @@ export async function del(key) {
   try {
     await (await db()).delete(STORE, key);
   } catch (e) {
-    console.error('storage.delete failed', key, e);
+    emitError(`Failed to delete data. ${e.message}`);
   }
 }
 

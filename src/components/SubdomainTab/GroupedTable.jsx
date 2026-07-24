@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback, memo, useTransition } from 'react';
+import { useMemo, useState, useCallback, memo, useTransition, useEffect } from 'react';
 import DataRow, { TableHeader, tableMinWidth } from './DataRow.jsx';
 
 const GROUP_PAGE_SIZE = 10;
@@ -46,7 +46,7 @@ export default function GroupedTable({ records, groupBy, visibleCols, rowProps }
   );
 
   // Reset pagination when data changes
-  useMemo(() => {
+  useEffect(() => {
     setGroupPages(new Map());
     setGroupsPage(0);
   }, [records, groupBy]);

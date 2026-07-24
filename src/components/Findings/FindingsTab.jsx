@@ -168,10 +168,10 @@ const FindingsTab = memo(function FindingsTab({ activeProjectId = 'default', hos
 
       <header className="fn-head">
         <div>
-          <h1>📝 Findings</h1>
+          <h1> Findings</h1>
           <p>{findings.length} findings · ${stats.bounty.toLocaleString()} bounty · {Object.keys(findingCountByHost).length} hosts</p>
         </div>
-        <button className="fn-btn" onClick={exportAll}>📦 Export Markdown</button>
+        <button className="fn-btn" onClick={exportAll}> Export Markdown</button>
       </header>
 
       {/* Status / severity summary */}
@@ -297,7 +297,7 @@ const FindingsTab = memo(function FindingsTab({ activeProjectId = 'default', hos
                 </div>
               )}
               <div className="fn-card-actions">
-                <button className="fn-btn-sm" onClick={() => copy(toMarkdown(f), `md-${f.id}`)}>{copied === `md-${f.id}` ? '✓ Copied' : 'Copy MD'}</button>
+                <button className="fn-btn-sm" onClick={() => copy(toMarkdown(f), `md-${f.id}`)}>{copied === `md-${f.id}` ? ' Copied' : 'Copy MD'}</button>
                 <button className="fn-btn-sm" onClick={() => download(`${f.host}-${f.title}`.replace(/[^\w.-]+/g, '_') + '.md', toMarkdown(f))}>Export</button>
                 <button className="fn-btn-sm" onClick={() => edit(f)}>Edit</button>
                 <button className="fn-btn-sm fn-danger" onClick={() => remove(f.id)}>Delete</button>

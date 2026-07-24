@@ -50,7 +50,7 @@ function SubdomainTab({
   const [historyRec, setHistoryRec] = useState(null);
   const [visible, setVisible] = useState(() => new Set(DEFAULT_VISIBLE));
   const [jumpPage, setJumpPage] = useState('');
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   const debouncedQuery = useDebouncedValue(query, SEARCH_DEBOUNCE_MS);
 
@@ -218,7 +218,7 @@ function SubdomainTab({
       {focusNewIds && focusNewIds.size > 0 && (
         <div className="focus-banner">
           Showing <strong>{focusNewIds.size.toLocaleString()}</strong> new subdomains from your last import
-          <button className="btn btn-ghost btn-sm" onClick={onClearFocusNew}>Clear ✕</button>
+          <button className="btn btn-ghost btn-sm" onClick={onClearFocusNew}>Clear </button>
         </div>
       )}
 
@@ -231,19 +231,19 @@ function SubdomainTab({
         <div className="filter-spacer" />
 
         <ColumnsMenu columns={available} visible={visible} onToggle={toggleColumn} />
-        <button className="btn btn-ghost btn-sm" onClick={() => setKwOpen(true)} title="Smart-flag keywords">✦ Keywords</button>
+        <button className="btn btn-ghost btn-sm" onClick={() => setKwOpen(true)} title="Smart-flag keywords"> Keywords</button>
         <DataMenu subs={subs} filtered={filtered} />
       </div>
 
       {filtered.length === 0 ? (
         <div className="glass-card empty-state">
-          <div className="empty-icon">🌐</div>
+          <div className="empty-icon"></div>
           <div className="empty-title">No subdomains yet</div>
           <div className="empty-sub">Paste recon output above or use Manual Add to get started.</div>
         </div>
       ) : view === 'ip' && !hasIp ? (
         <div className="glass-card empty-state">
-          <div className="empty-icon">🧭</div>
+          <div className="empty-icon"></div>
           <div className="empty-title">No IP data found in your imports</div>
           <div className="empty-sub">Re-export with <span className="mono">httpx -ip</span> (or JSONL with an <span className="mono">ip</span> field) to enable this view.</div>
         </div>
@@ -374,7 +374,7 @@ function DataMenu({ subs, filtered }) {
         if (confirm('Warning: This will overwrite your current project data. Continue?')) {
           subs.loadSession(json);
         }
-      } catch (err) {
+      } catch {
         alert('Invalid JSON session file.');
       }
     };
@@ -408,7 +408,7 @@ function DataMenu({ subs, filtered }) {
 
   return (
     <div className="menu">
-      <button className="btn btn-ghost btn-sm" onClick={() => setOpen((o) => !o)}>Data ▾</button>
+      <button className="btn btn-ghost btn-sm" onClick={() => setOpen((o) => !o)}>Data </button>
       {open && (
         <div className="menu-list" onMouseLeave={() => setOpen(false)}>
           {/* Export respects the active status pill + search → "export the 200s" = pick 200 then this */}
@@ -418,14 +418,14 @@ function DataMenu({ subs, filtered }) {
           {sep}
           {/* In-app sessions: stored in the app, reload anytime */}
           <div className="menu-head">Sessions (saved in app)</div>
-          <button className="menu-item" onClick={saveSession} disabled={subs.records.length === 0}>💾 Save current as session…</button>
+          <button className="menu-item" onClick={saveSession} disabled={subs.records.length === 0}> Save current as session…</button>
           {sessions.length === 0 && <div className="menu-empty">No saved sessions yet</div>}
           {sessions.map((s) => (
             <div key={s.id} className="menu-row">
               <button className="menu-item menu-item-grow" title={new Date(s.at).toLocaleString()} onClick={() => loadSession(s.id, s.name)}>
                 ↺ {s.name} <span className="menu-dim">({(s.count || 0).toLocaleString()})</span>
               </button>
-              <button className="menu-x" title="Delete session" onClick={() => subs.deleteNamedSession(s.id)}>✕</button>
+              <button className="menu-x" title="Delete session" onClick={() => subs.deleteNamedSession(s.id)}></button>
             </div>
           ))}
           {sep}

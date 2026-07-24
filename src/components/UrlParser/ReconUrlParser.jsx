@@ -1,4 +1,4 @@
-import React, {
+import {
   useState,
   useEffect,
   useRef,
@@ -11,6 +11,7 @@ import VirtualTable from '../SubdomainTab/VirtualTable.jsx';
 import { get, set, KEYS } from '../../lib/storage.js';
 import { addWordlist, loadWordlists } from '../../lib/wordlists.js';
 import { CATEGORIES, SOURCES, getSevColor, escapeHtml, csvCell, buildTemplates, urlTemplate, CONF_RANK, collectJwts, buildVerbMatrix, buildEnvMatrix, buildParamDossier, fuzzCommand } from './engine.js';
+import { diffUrls, sessionSignature } from '../../lib/diff.js';
 
 const ROW_HEIGHT = 64;
 const PAGE_SIZE = 50;
@@ -59,7 +60,7 @@ const UrlRow = memo(function UrlRow({ d, i, activeTab, status, isCopied, onToggl
 
       {d.confidence && <span className={`up-conf up-conf-${d.confidence}`} title={`${d.confidence} confidence this is a real candidate`}>{d.confidence[0].toUpperCase()}</span>}
 
-      {d.highEntropy && <span className="up-entropy" title="High-entropy token detected">⚡</span>}
+      {d.highEntropy && <span className="up-entropy" title="High-entropy token detected"></span>}
 
       {d.dupeCount > 0 && <span className="up-dupe" title={`${d.dupeCount} duplicate URL(s) collapsed into this one`}>×{(d.dupeCount + 1).toLocaleString()}</span>}
 
@@ -90,7 +91,7 @@ const UrlRow = memo(function UrlRow({ d, i, activeTab, status, isCopied, onToggl
 
       <button className="up-icon-btn" onClick={() => onCopy(d.original || d.url, `url-${i}`)} title="Copy URL">
         {isCopied ? (
-          <span style={{ color: '#10b981', fontWeight: 700 }}>✓</span>
+          <span style={{ color: '#10b981', fontWeight: 700 }}></span>
         ) : (
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <path d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
@@ -125,7 +126,7 @@ const TemplateRow = memo(function TemplateRow({ t, isCopied, isFuzzed, onCopy, o
   return (
     <div className="up-trow" style={{ height: TEMPLATE_ROW_H }}>
       <div className="up-tcount" title={`${t.count} URLs collapse to this template`}>×{t.count.toLocaleString()}</div>
-      {t.rarity != null && <div className="up-rarity" title="Rarity (IDF) — higher = more unique/forgotten">◈{t.rarity}</div>}
+      {t.rarity != null && <div className="up-rarity" title="Rarity (IDF) — higher = more unique/forgotten">{t.rarity}</div>}
       <div className="up-score" title={`${t.score} pts`} style={{ background: `${color}22`, color, borderColor: `${color}55` }}>{t.score}</div>
       <div className="up-turl up-turl-link" title={`${t.template}\n(click to see the ${t.count} underlying URLs)`} onClick={() => onDrill(t.template)}>{t.template}</div>
       <div className="up-tags">
@@ -135,10 +136,10 @@ const TemplateRow = memo(function TemplateRow({ t, isCopied, isFuzzed, onCopy, o
         })}
       </div>
       <button className="up-icon-btn" onClick={() => onFuzz(t.template, `fz-${idx}`)} title="Copy ffuf command for this template">
-        {isFuzzed ? <span style={{ color: '#10b981', fontWeight: 700 }}>✓</span> : '⚡'}
+        {isFuzzed ? <span style={{ color: '#10b981', fontWeight: 700 }}></span> : ''}
       </button>
       <button className="up-icon-btn" onClick={() => onCopy(t.sample, `tmpl-${idx}`)} title="Copy a sample URL">
-        {isCopied ? <span style={{ color: '#10b981', fontWeight: 700 }}>✓</span> : '⧉'}
+        {isCopied ? <span style={{ color: '#10b981', fontWeight: 700 }}></span> : '⧉'}
       </button>
     </div>
   );
@@ -530,6 +531,15 @@ const ReconUrlParser = memo(function ReconUrlParser({ activeProjectId = 'default
     return lc ? all.filter((d) => d.param.toLowerCase().includes(lc)) : all;
   }, [resultView, parsedData, lc]);
 
+  // --- Session Diff ---
+  const [diffSessionId, setDiffSessionId] = useState(null);
+  const diffResult = useMemo(() => {
+    if (resultView !== 'diff' || !diffSessionId) return null;
+    const target = sessions.find((s) => s.id === diffSessionId);
+    if (!target || !target.sig) return null;
+    return diffUrls(target.sig.urls.map((u) => ({ url: u, categories: [] })), parsedData);
+  }, [resultView, diffSessionId, sessions, parsedData]);
+
   // Shared pagination for the JWT / verb / env / params lenses.
   const [lensPage, setLensPage] = useState(0);
   useEffect(() => { setLensPage(0); }, [resultView, lc, parsedData]);
@@ -539,6 +549,7 @@ const ReconUrlParser = memo(function ReconUrlParser({ activeProjectId = 'default
   const lensSlice = lensList.slice(safeLensPage * LENS_PAGE, safeLensPage * LENS_PAGE + LENS_PAGE);
   // Leaving the Endpoints lens clears any drill-down.
   useEffect(() => { if (resultView !== 'endpoints') setDrillTemplate(null); }, [resultView]);
+  useEffect(() => { if (resultView !== 'diff') setDiffSessionId(null); }, [resultView]);
 
   const exportCsv = () => {
     let rows;
@@ -586,6 +597,7 @@ const ReconUrlParser = memo(function ReconUrlParser({ activeProjectId = 'default
       checks,
       urlStatuses,
       customRegexes,
+      sig: parsedData.length > 0 ? sessionSignature(parsedData) : undefined,
     };
     const ok = await saveSessionsStore([...sessions, newSession]);
     if (ok) alert('Session saved.');
@@ -665,7 +677,7 @@ const ReconUrlParser = memo(function ReconUrlParser({ activeProjectId = 'default
       {/* Header */}
       <header className="up-header">
         <div className="up-title">
-          <div className="up-logo">🔗</div>
+          <div className="up-logo"></div>
           <div>
             <h1>URL Parser</h1>
             <p>Multi-pass validation &amp; vulnerability triage engine</p>
@@ -687,10 +699,10 @@ const ReconUrlParser = memo(function ReconUrlParser({ activeProjectId = 'default
               <span className="up-chip">{lineCount.toLocaleString()} lines</span>
             </div>
             <div className="up-panel-actions">
-              {showPreview && <button className="up-btn-ghost" onClick={() => setEditingInput(true)}>✏ Edit</button>}
-              <button className="up-btn-ghost" onClick={() => fileInputRef.current.click()}>📂 Import</button>
+              {showPreview && <button className="up-btn-ghost" onClick={() => setEditingInput(true)}> Edit</button>}
+              <button className="up-btn-ghost" onClick={() => fileInputRef.current.click()}> Import</button>
               <input type="file" ref={fileInputRef} style={{ display: 'none' }} accept=".txt,.csv" onChange={handleFileUpload} />
-              <button className="up-btn-ghost up-danger" onClick={() => { setRawInput(''); setEditingInput(true); setInputPage(0); if (rawInputRef.current) rawInputRef.current.value = ''; }}>🗑 Clear</button>
+              <button className="up-btn-ghost up-danger" onClick={() => { setRawInput(''); setEditingInput(true); setInputPage(0); if (rawInputRef.current) rawInputRef.current.value = ''; }}> Clear</button>
             </div>
           </div>
           {showPreview ? (
@@ -785,7 +797,7 @@ const ReconUrlParser = memo(function ReconUrlParser({ activeProjectId = 'default
                       <span className="up-custom-name">{r.label}</span>
                       <span className="up-custom-pat">{r.pattern}</span>
                     </div>
-                    <button className="up-icon-btn up-danger" onClick={() => removeCustomRegex(r.id)}>🗑</button>
+                    <button className="up-icon-btn up-danger" onClick={() => removeCustomRegex(r.id)}></button>
                   </div>
                 ))}
               </div>
@@ -804,15 +816,15 @@ const ReconUrlParser = memo(function ReconUrlParser({ activeProjectId = 'default
         )}
         <div className="up-actions">
           <button className="up-btn-primary" onClick={runParse} disabled={isParsing}>
-            {isParsing ? '⏳ Processing…' : '▶ Parse & Analyze'}
+            {isParsing ? ' Processing…' : ' Parse & Analyze'}
           </button>
           {isParsing && (
-            <button className="up-btn-ghost up-danger" onClick={cancelParse}>✕ Cancel</button>
+            <button className="up-btn-ghost up-danger" onClick={cancelParse}> Cancel</button>
           )}
-          <button className="up-btn-ghost" onClick={dedupFirst} disabled={isParsing}>🔗 Dedup First</button>
-          <button className="up-btn-ghost" onClick={exportCsv} disabled={isParsing || parsedData.length === 0}>📦 Export CSV</button>
-          <button className="up-btn-ghost" onClick={exportTxt} disabled={isParsing || parsedData.length === 0}>📄 Export TXT</button>
-          <button className="up-btn-ghost" onClick={saveCurrentSession} disabled={isParsing}>💾 Save Session</button>
+          <button className="up-btn-ghost" onClick={dedupFirst} disabled={isParsing}> Dedup First</button>
+          <button className="up-btn-ghost" onClick={exportCsv} disabled={isParsing || parsedData.length === 0}> Export CSV</button>
+          <button className="up-btn-ghost" onClick={exportTxt} disabled={isParsing || parsedData.length === 0}> Export TXT</button>
+          <button className="up-btn-ghost" onClick={saveCurrentSession} disabled={isParsing}> Save Session</button>
         </div>
       </div>
 
@@ -851,7 +863,7 @@ const ReconUrlParser = memo(function ReconUrlParser({ activeProjectId = 'default
 
           {stats.domainBreakdown && Object.keys(stats.domainBreakdown).length > 0 && (
             <div className="up-domains">
-              <div className="up-section-tag">🌐 Domain Breakdown ({Object.keys(stats.domainBreakdown).length})</div>
+              <div className="up-section-tag"> Domain Breakdown ({Object.keys(stats.domainBreakdown).length})</div>
               <div className="up-panel up-pad">
                 <div className="up-domain-grid">
                   {Object.entries(stats.domainBreakdown).sort((a, b) => b[1] - a[1]).slice(0, 200).map(([domain, count]) => (
@@ -868,12 +880,13 @@ const ReconUrlParser = memo(function ReconUrlParser({ activeProjectId = 'default
           <div className="up-panel up-table-panel">
             <div className="up-tabs-bar">
               <div className="up-lens">
-                <button className={`up-lens-btn ${resultView === 'categories' ? 'is-active' : ''}`} onClick={() => setResultView('categories')}>🔥 Categories</button>
-                <button className={`up-lens-btn ${resultView === 'endpoints' ? 'is-active' : ''}`} onClick={() => setResultView('endpoints')}>🧬 Endpoints</button>
-                <button className={`up-lens-btn ${resultView === 'params' ? 'is-active' : ''}`} onClick={() => setResultView('params')}>📊 Parameters</button>
-                <button className={`up-lens-btn ${resultView === 'jwts' ? 'is-active' : ''}`} onClick={() => setResultView('jwts')}>🔑 JWTs</button>
-                <button className={`up-lens-btn ${resultView === 'verb' ? 'is-active' : ''}`} onClick={() => setResultView('verb')}>🔀 IDOR Matrix</button>
-                <button className={`up-lens-btn ${resultView === 'env' ? 'is-active' : ''}`} onClick={() => setResultView('env')}>🚦 Env Drift</button>
+                <button className={`up-lens-btn ${resultView === 'categories' ? 'is-active' : ''}`} onClick={() => setResultView('categories')}> Categories</button>
+                <button className={`up-lens-btn ${resultView === 'endpoints' ? 'is-active' : ''}`} onClick={() => setResultView('endpoints')}> Endpoints</button>
+                <button className={`up-lens-btn ${resultView === 'params' ? 'is-active' : ''}`} onClick={() => setResultView('params')}> Parameters</button>
+                <button className={`up-lens-btn ${resultView === 'jwts' ? 'is-active' : ''}`} onClick={() => setResultView('jwts')}> JWTs</button>
+                <button className={`up-lens-btn ${resultView === 'verb' ? 'is-active' : ''}`} onClick={() => setResultView('verb')}> IDOR Matrix</button>
+                <button className={`up-lens-btn ${resultView === 'env' ? 'is-active' : ''}`} onClick={() => setResultView('env')}> Env Drift</button>
+                <button className={`up-lens-btn ${resultView === 'diff' ? 'is-active' : ''}`} onClick={() => setResultView('diff')}> Diff</button>
               </div>
 
               {resultView === 'categories' ? (
@@ -894,7 +907,7 @@ const ReconUrlParser = memo(function ReconUrlParser({ activeProjectId = 'default
                 <span className="up-tmpl-count">
                   {filteredTemplates.length.toLocaleString()} templates ·{' '}
                   <button className="up-sort-link" onClick={() => setEndpointSort((s) => (s === 'count' ? 'rarity' : 'count'))}>
-                    sort: {endpointSort === 'count' ? 'count ▾' : 'rarity ▾'}
+                    sort: {endpointSort === 'count' ? 'count ' : 'rarity '}
                   </button>
                 </span>
               ) : resultView === 'params' ? (
@@ -903,9 +916,11 @@ const ReconUrlParser = memo(function ReconUrlParser({ activeProjectId = 'default
                 <span className="up-tmpl-count">{jwtFindings.length.toLocaleString()} JWT(s) decoded</span>
               ) : resultView === 'verb' ? (
                 <span className="up-tmpl-count">{verbMatrix.length.toLocaleString()} endpoint templates · destructive verbs first</span>
-              ) : (
+              ) : resultView === 'env' ? (
                 <span className="up-tmpl-count">{envMatrix.length.toLocaleString()} shared paths · drift first (needs httpx status input)</span>
-              )}
+              ) : resultView === 'diff' ? (
+                <span className="up-tmpl-count">{diffResult ? `${diffResult.stats.added} added · ${diffResult.stats.removed} removed` : 'Pick a session below'}</span>
+              ) : null}
 
               {resultView === 'categories' && (
                 <select className="up-conf-select" value={minConf} onChange={(e) => setMinConf(e.target.value)} title="Minimum detection confidence to show">
@@ -921,7 +936,7 @@ const ReconUrlParser = memo(function ReconUrlParser({ activeProjectId = 'default
               <>
                 <div className="up-table-body">
                   {activeData.length === 0 ? (
-                    <div className="up-empty"><span>🔍</span>No URLs matched for this view.</div>
+                    <div className="up-empty"><span></span>No URLs matched for this view.</div>
                   ) : (
                     <VirtualTable
                       items={pagedData}
@@ -992,7 +1007,7 @@ const ReconUrlParser = memo(function ReconUrlParser({ activeProjectId = 'default
               ) : (
                 <div className="up-table-body">
                   {filteredTemplates.length === 0 ? (
-                    <div className="up-empty"><span>🧬</span>No endpoint templates.</div>
+                    <div className="up-empty"><span></span>No endpoint templates.</div>
                   ) : (
                     <VirtualTable
                       items={filteredTemplates}
@@ -1009,7 +1024,7 @@ const ReconUrlParser = memo(function ReconUrlParser({ activeProjectId = 'default
               <>
                 <div className="up-table-body up-scroll">
                   {lensList.length === 0 ? (
-                    <div className="up-empty"><span>📊</span>No parameters found.</div>
+                    <div className="up-empty"><span></span>No parameters found.</div>
                   ) : lensSlice.map((d, i) => {
                     const gi = safeLensPage * LENS_PAGE + i;
                     return (
@@ -1024,7 +1039,7 @@ const ReconUrlParser = memo(function ReconUrlParser({ activeProjectId = 'default
                           })}
                         </div>
                         <button className="up-icon-btn" onClick={() => handleFuzz(`{HOST}/{PATH}?${d.param}={val}`, `pf-${gi}`)} title="Copy ffuf command for this param">
-                          {copiedState === `pf-${gi}` ? <span style={{ color: '#10b981', fontWeight: 700 }}>✓</span> : '⚡'}
+                          {copiedState === `pf-${gi}` ? <span style={{ color: '#10b981', fontWeight: 700 }}></span> : ''}
                         </button>
                       </div>
                     );
@@ -1036,7 +1051,7 @@ const ReconUrlParser = memo(function ReconUrlParser({ activeProjectId = 'default
               <>
                 <div className="up-table-body up-scroll">
                   {lensList.length === 0 ? (
-                    <div className="up-empty"><span>🔑</span>No JWTs found in these URLs.</div>
+                    <div className="up-empty"><span></span>No JWTs found in these URLs.</div>
                   ) : lensSlice.map((j, i) => {
                     const gi = safeLensPage * LENS_PAGE + i;
                     return (
@@ -1046,7 +1061,7 @@ const ReconUrlParser = memo(function ReconUrlParser({ activeProjectId = 'default
                           {j.exp && <span className={`up-jwt-tag ${j.expired ? 'is-bad' : ''}`}>{j.expired ? 'EXPIRED' : 'valid'} {new Date(j.exp * 1000).toISOString().slice(0, 10)}</span>}
                           {j.iss && <span className="up-jwt-meta">iss: {j.iss}</span>}
                           {j.sub && <span className="up-jwt-meta">sub: {j.sub}</span>}
-                          <button className="up-icon-btn" style={{ marginLeft: 'auto' }} onClick={() => handleCopy(j.token, `jwt-${gi}`)} title="Copy token">{copiedState === `jwt-${gi}` ? '✓' : '⧉'}</button>
+                          <button className="up-icon-btn" style={{ marginLeft: 'auto' }} onClick={() => handleCopy(j.token, `jwt-${gi}`)} title="Copy token">{copiedState === `jwt-${gi}` ? '' : '⧉'}</button>
                         </div>
                         <div className="up-jwt-issues">
                           {j.issues.map((s) => <span key={s} className={`up-jwt-issue ${/alg:none|forgeable|injection|expired/.test(s) ? 'is-bad' : ''}`}>{s}</span>)}
@@ -1062,7 +1077,7 @@ const ReconUrlParser = memo(function ReconUrlParser({ activeProjectId = 'default
               <>
                 <div className="up-table-body up-scroll">
                   {lensList.length === 0 ? (
-                    <div className="up-empty"><span>🔀</span>No endpoints. Feed httpx <code>-method</code> output to populate verbs.</div>
+                    <div className="up-empty"><span></span>No endpoints. Feed httpx <code>-method</code> output to populate verbs.</div>
                   ) : lensSlice.map((v) => (
                     <div key={v.template} className="up-trow" style={{ height: 'auto', padding: '10px 16px' }}>
                       {v.destructive && <span className="up-conf up-conf-high" title="Has a state-changing verb (POST/PUT/DELETE/PATCH) → BOLA candidate">!</span>}
@@ -1078,11 +1093,11 @@ const ReconUrlParser = memo(function ReconUrlParser({ activeProjectId = 'default
                 </div>
                 <Pager page={safeLensPage} pages={lensPages} onSet={setLensPage} label={`${lensList.length.toLocaleString()} templates`} />
               </>
-            ) : (
+            ) : resultView === 'env' ? (
               <>
                 <div className="up-table-body up-scroll">
                   {lensList.length === 0 ? (
-                    <div className="up-empty"><span>🚦</span>No shared paths across hosts. Feed httpx with status codes (<code>-sc -json</code>) for drift detection.</div>
+                    <div className="up-empty"><span></span>No shared paths across hosts. Feed httpx with status codes (<code>-sc -json</code>) for drift detection.</div>
                   ) : lensSlice.map((e) => (
                     <div key={e.path} className="up-env-row">
                       <div className="up-env-head">
@@ -1102,7 +1117,69 @@ const ReconUrlParser = memo(function ReconUrlParser({ activeProjectId = 'default
                 </div>
                 <Pager page={safeLensPage} pages={lensPages} onSet={setLensPage} label={`${lensList.length.toLocaleString()} shared paths`} />
               </>
-            )}
+            ) : resultView === 'diff' ? (
+              <>
+                <div className="up-table-body up-scroll">
+                  {!diffResult ? (
+                    <div className="up-empty"><span></span>Pick a session from the Saved Sessions panel below to diff against the current data.</div>
+                  ) : (
+                    <div className="up-diff-wrap">
+                      {diffResult.stats.added === 0 && diffResult.stats.removed === 0 && diffResult.stats.changed === 0 ? (
+                        <div className="up-empty"><span></span>No differences — current session matches the selected session.</div>
+                      ) : (
+                        <>
+                          <div className="up-diff-summary">
+                            <span className="up-diff-stat added">+{diffResult.stats.added} added</span>
+                            <span className="up-diff-stat removed">−{diffResult.stats.removed} removed</span>
+                            <span className="up-diff-stat changed">~{diffResult.stats.changed} changed</span>
+                          </div>
+                          {diffResult.stats.added + diffResult.stats.removed > 0 && (
+                            <div className="up-diff-section">
+                              {diffResult.added.map((r) => (
+                                <div key={r.url} className="up-diff-row added">
+                                  <span className="up-diff-icon">+</span>
+                                  <span className="up-diff-url">{r.url}</span>
+                                </div>
+                              ))}
+                              {diffResult.removed.map((r) => (
+                                <div key={r.url} className="up-diff-row removed">
+                                  <span className="up-diff-icon">−</span>
+                                  <span className="up-diff-url">{r.url}</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                          {diffResult.paramChanges.length > 0 && (
+                            <div className="up-diff-section">
+                              <div className="up-diff-subhead">Parameter changes</div>
+                              {diffResult.paramChanges.map((c) => (
+                                <div key={c.url} className="up-diff-row changed">
+                                  <span className="up-diff-url">{c.url}</span>
+                                  {c.addedParams.length > 0 && <span className="up-diff-tag added">+{c.addedParams.join(', ')}</span>}
+                                  {c.removedParams.length > 0 && <span className="up-diff-tag removed">−{c.removedParams.join(', ')}</span>}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                          {diffResult.newEndpoints.length > 0 && (
+                            <div className="up-diff-section">
+                              <div className="up-diff-subhead">New endpoints</div>
+                              {diffResult.newEndpoints.map((p) => <div key={p} className="up-diff-row added"><span className="up-diff-url">{p}</span></div>)}
+                            </div>
+                          )}
+                          {diffResult.goneEndpoints.length > 0 && (
+                            <div className="up-diff-section">
+                              <div className="up-diff-subhead">Removed endpoints</div>
+                              {diffResult.goneEndpoints.map((p) => <div key={p} className="up-diff-row removed"><span className="up-diff-url">{p}</span></div>)}
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : null}
           </div>
         </div>
       )}
@@ -1129,9 +1206,9 @@ const ReconUrlParser = memo(function ReconUrlParser({ activeProjectId = 'default
                 <div className="up-panel-head">
                   <div className="up-panel-title">{label}</div>
                   <div style={{ display: 'flex', gap: 6 }}>
-                    <button className="up-mini up-mini-on" onClick={() => openWlSave(wordlists[key], `${source}-${key}`, key === 'keys' ? 'params' : key === 'paths' ? 'paths' : 'values')} title="Save to the Wordlists library">💾 Send</button>
+                    <button className="up-mini up-mini-on" onClick={() => openWlSave(wordlists[key], `${source}-${key}`, key === 'keys' ? 'params' : key === 'paths' ? 'paths' : 'values')} title="Save to the Wordlists library"> Send</button>
                     <button className="up-mini up-mini-on" onClick={() => handleCopy(wordlists[key], `wl-${key}`)}>
-                      {copiedState === `wl-${key}` ? '✓ Copied' : 'Copy'}
+                      {copiedState === `wl-${key}` ? ' Copied' : 'Copy'}
                     </button>
                   </div>
                 </div>
@@ -1150,7 +1227,7 @@ const ReconUrlParser = memo(function ReconUrlParser({ activeProjectId = 'default
       {/* Sessions */}
       <div className="up-sessions">
         <button className="up-sessions-toggle" onClick={() => setShowSessions(!showSessions)}>
-          {showSessions ? '▼' : '▶'} Saved Sessions <span className="up-chip">{sessions.length}</span>
+          {showSessions ? '' : ''} Saved Sessions <span className="up-chip">{sessions.length}</span>
         </button>
         {showSessions && (
           <div className="up-session-grid">
@@ -1180,6 +1257,7 @@ const ReconUrlParser = memo(function ReconUrlParser({ activeProjectId = 'default
                       alert("Session loaded. Click 'Parse & Analyze' to rebuild the dashboard.");
                     }}
                   >Load</button>
+                  <button className="up-btn-ghost" onClick={() => { setResultView('diff'); setDiffSessionId(s.id); }}>Diff</button>
                   <button className="up-btn-ghost up-danger" onClick={() => saveSessionsStore(sessions.filter((x) => x.id !== s.id))}>Delete</button>
                 </div>
               </div>
@@ -1455,6 +1533,27 @@ const styles = `
 .up-session-actions { display: flex; gap: 8px; margin-top: auto; }
 .up-session-actions .up-btn-ghost { flex: 1; }
 .up-italic { font-style: italic; }
+
+/* Diff */
+.up-diff-wrap { padding: var(--sp-4); display: flex; flex-direction: column; gap: var(--sp-4); height: 100%; overflow-y: auto; }
+.up-diff-summary { display: flex; gap: var(--sp-4); padding-bottom: var(--sp-3); border-bottom: 1px solid var(--border); }
+.up-diff-stat { font-size: 13px; font-weight: 600; }
+.up-diff-stat.added { color: #10b981; }
+.up-diff-stat.removed { color: #ef4444; }
+.up-diff-stat.changed { color: #f59e0b; }
+.up-diff-section { display: flex; flex-direction: column; gap: 2px; }
+.up-diff-subhead { font-size: 12px; font-weight: 600; color: var(--text2); padding: var(--sp-2) 0; }
+.up-diff-row { display: flex; align-items: center; gap: var(--sp-2); padding: 4px 8px; border-radius: var(--radius-sm); font-size: 12.5px; font-family: var(--font-data); }
+.up-diff-row.added { background: rgba(16,185,129,0.08); }
+.up-diff-row.removed { background: rgba(239,68,68,0.08); }
+.up-diff-row.changed { background: rgba(245,158,11,0.06); }
+.up-diff-icon { width: 16px; text-align: center; font-weight: 700; flex-shrink: 0; }
+.up-diff-row.added .up-diff-icon { color: #10b981; }
+.up-diff-row.removed .up-diff-icon { color: #ef4444; }
+.up-diff-url { min-width: 0; word-break: break-all; }
+.up-diff-tag { font-size: 11px; padding: 1px 6px; border-radius: 999px; white-space: nowrap; }
+.up-diff-tag.added { background: rgba(16,185,129,0.15); color: #10b981; }
+.up-diff-tag.removed { background: rgba(239,68,68,0.15); color: #ef4444; }
 
 @media (max-width: 980px) { .up-grid { grid-template-columns: 1fr; } }
 `;

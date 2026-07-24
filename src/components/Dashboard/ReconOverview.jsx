@@ -6,13 +6,9 @@ import { coverage } from '../../lib/scope.js';
 // scope coverage bar, and live tiles for ports / vulns / assets. Cards navigate
 // to their tab on click.
 export default function ReconOverview({ subRecords, portRecords, scopeRules, assets, onNavigate }) {
-  const ports = portRecords || [];
-  const subs = subRecords || [];
-  const rules = scopeRules || [];
-  const a = assets || {};
-
   const p = useMemo(() => {
-    const enriched = ports.map((r) => ({ r, e: enrich(r) }));
+    const records = portRecords || [];
+    const enriched = records.map((r) => ({ r, e: enrich(r) }));
     const open = enriched.filter((x) => (x.r.state || '').startsWith('open'));
     const sev = { critical: 0, high: 0, medium: 0, low: 0, info: 0 };
     let kev = 0, cve = 0, danger = 0;
@@ -34,22 +30,25 @@ export default function ReconOverview({ subRecords, portRecords, scopeRules, ass
       score: attackSurfaceScore(open.map((x) => x.e)),
       openCount: open.length, sev, kev, cve, danger, topHosts,
     };
-  }, [ports]);
+  }, [portRecords]);
 
   const band = scoreBand(p.score);
 
   const cov = useMemo(() => {
+    const subs = subRecords || [];
+    const ports = portRecords || [];
+    const a = assets || {};
     const hosts = [
       ...subs.map((r) => r.host),
       ...ports.map((r) => r.host),
       ...((a.subdomains || []).map((x) => (typeof x === 'string' ? x : x.v))),
     ];
-    return coverage(hosts, rules);
-  }, [subs, ports, a, rules]);
+    return coverage(hosts, scopeRules || []);
+  }, [subRecords, portRecords, assets, scopeRules]);
 
-  const assetCount = (k) => (a[k] || []).length;
-  const hasPorts = ports.length > 0;
-  const hasScope = rules.length > 0;
+  const assetCount = (k) => ((assets || {})[k] || []).length;
+  const hasPorts = (portRecords || []).length > 0;
+  const hasScope = (scopeRules || []).length > 0;
 
   // gauge geometry
   const R = 52;

@@ -5,7 +5,7 @@ const META = {
   200: { label: '200', cls: 's200' },
   301: { label: '301', cls: 's301' },
   302: { label: '302', cls: 's302' },
-  403: { label: '403 🔥', cls: 's403' },
+  403: { label: '403 ', cls: 's403' },
   404: { label: '404', cls: 's404' },
   500: { label: '500', cls: 's500' },
   other: { label: 'Other' },

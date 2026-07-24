@@ -5,7 +5,7 @@ import { statusGroup } from '../../lib/status.js';
 //   | 'other' | 'new'. Counts are passed in already computed.
 export const CURATED_CODES = ['200', '301', '403', '404', '500'];
 
-const ICONS = { 403: '🔥' };
+const ICONS = { 403: '' };
 
 export default function StatusTabStrip({ counts, selection, onSelect }) {
   const tab = (key, label, opts = {}) => {

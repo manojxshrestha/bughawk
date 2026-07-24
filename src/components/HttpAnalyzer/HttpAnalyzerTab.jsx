@@ -34,7 +34,7 @@ const HttpAnalyzerTab = memo(function HttpAnalyzerTab() {
       <style>{styles}</style>
       <header className="ha-head">
         <div>
-          <h1>🧪 HTTP Analyzer</h1>
+          <h1> HTTP Analyzer</h1>
           <p>Paste a raw request &amp; response → findings + {TECHNIQUE_COUNT} techniques</p>
         </div>
         <button className="ha-btn-primary" onClick={analyze}>Analyze</button>
@@ -82,7 +82,7 @@ const HttpAnalyzerTab = memo(function HttpAnalyzerTab() {
         <div className="ha-cats">
           <button className={libCat === 'all' ? 'on' : ''} onClick={() => setLibCat('all')}>all</button>
           {relevantCats.size > 0 && [...relevantCats].map((c) => (
-            <button key={`r-${c}`} className={`ha-rel ${libCat === c ? 'on' : ''}`} onClick={() => setLibCat(c)}>★ {c}</button>
+            <button key={`r-${c}`} className={`ha-rel ${libCat === c ? 'on' : ''}`} onClick={() => setLibCat(c)}> {c}</button>
           ))}
           {TECHNIQUE_CATEGORIES.map((c) => (
             <button key={c} className={libCat === c ? 'on' : ''} onClick={() => setLibCat(c)}>{c}</button>

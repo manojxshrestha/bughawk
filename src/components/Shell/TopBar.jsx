@@ -12,6 +12,7 @@ export default function TopBar({
   onOpenPalette,
   theme,
   onToggleTheme,
+  onImport,
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
@@ -39,7 +40,7 @@ export default function TopBar({
           <span className="proj-meta">
             {empty ? '' : `${(activeProject?.subdomainCount || 0).toLocaleString()}`}
           </span>
-          <span className="chevron">▾</span>
+          <span className="chevron"></span>
         </button>
 
         {open && !empty && (
@@ -68,13 +69,13 @@ export default function TopBar({
               className="proj-action"
               onClick={() => { onRename(activeProject); setOpen(false); }}
             >
-              ✎ Rename current
+               Rename current
             </button>
             <button
               className="proj-action danger"
               onClick={() => { onDelete(activeProject); setOpen(false); }}
             >
-              🗑 Delete current
+              Delete current
             </button>
           </div>
         )}
@@ -87,8 +88,11 @@ export default function TopBar({
       </div>
 
       <div className="topbar-right">
+        <button className="icon-btn" onClick={onImport} title="Import project zip">
+          +
+        </button>
         <button className="icon-btn" onClick={onToggleTheme} title="Toggle theme">
-          {theme === 'light' ? '☾' : '☀'}
+          {theme === 'light' ? '' : ''}
         </button>
       </div>
     </header>

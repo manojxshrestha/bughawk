@@ -19,12 +19,12 @@ export default function PortDiffModal({ ports, onClose }) {
       <div className="modal diff-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h3>What changed</h3>
-          <button className="btn btn-ghost btn-sm" onClick={onClose}>✕</button>
+          <button className="btn btn-ghost btn-sm" onClick={onClose}></button>
         </div>
 
         {sessions.length === 0 ? (
           <div className="detail-empty" style={{ padding: '16px 0' }}>
-            No saved session to compare against. Save a session now (💾 Sessions), then
+            No saved session to compare against. Save a session now ( Sessions), then
             re-import a later scan and come back here to see the difference.
           </div>
         ) : (
@@ -42,9 +42,9 @@ export default function PortDiffModal({ ports, onClose }) {
 
             {diff && (
               <div className="diff-summary">
-                <span className="diff-stat opened">🟢 {diff.opened.length} opened</span>
-                <span className="diff-stat closed">🔴 {diff.closed.length} closed</span>
-                <span className="diff-stat changed">⚪ {diff.changed.length} changed</span>
+                <span className="diff-stat opened"> {diff.opened.length} opened</span>
+                <span className="diff-stat closed"> {diff.closed.length} closed</span>
+                <span className="diff-stat changed"> {diff.changed.length} changed</span>
               </div>
             )}
 

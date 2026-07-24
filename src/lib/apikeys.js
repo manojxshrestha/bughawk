@@ -7,7 +7,7 @@ export const API_TOOLS = [
   {
     id: 'subfinder',
     name: 'Subfinder',
-    icon: '🌐',
+    icon: '',
     doc: 'https://github.com/projectdiscovery/subfinder#post-installation-instructions',
     desc: 'Passive subdomain enumeration. Keys live in provider-config.yaml — fill the sources you have.',
     exportKind: 'yaml',
@@ -41,7 +41,7 @@ export const API_TOOLS = [
   {
     id: 'chaos',
     name: 'Chaos',
-    icon: '🌪',
+    icon: '',
     doc: 'https://github.com/projectdiscovery/chaos-client',
     desc: 'ProjectDiscovery Chaos dataset. Consumed from the CHAOS_KEY environment variable.',
     exportKind: 'env',
@@ -51,7 +51,7 @@ export const API_TOOLS = [
   {
     id: 'findomain',
     name: 'Findomain',
-    icon: '🔎',
+    icon: '',
     doc: 'https://github.com/Findomain/Findomain#access-tokens-configuration',
     desc: 'Subdomain finder. Tokens are read from environment variables.',
     exportKind: 'env',
@@ -71,7 +71,7 @@ export const API_TOOLS = [
   {
     id: 'github',
     name: 'GitHub',
-    icon: '🐙',
+    icon: '',
     doc: 'https://github.com/settings/tokens',
     desc: 'Personal access token(s) — used for GitHub dorking and tools that hit the GitHub API.',
     exportKind: 'env',
@@ -81,7 +81,7 @@ export const API_TOOLS = [
   {
     id: 'shodan',
     name: 'Shodan',
-    icon: '🛰',
+    icon: '',
     doc: 'https://github.com/achillean/shodan-python',
     desc: 'Shodan API key. (shodan init <key>, or SHODAN_API_KEY env.)',
     exportKind: 'env',
@@ -91,7 +91,7 @@ export const API_TOOLS = [
   {
     id: 'virustotal',
     name: 'VirusTotal',
-    icon: '🧪',
+    icon: '',
     doc: 'https://docs.virustotal.com/docs/api-overview',
     desc: 'VirusTotal API key — used by subfinder, findomain and direct lookups.',
     exportKind: 'env',
