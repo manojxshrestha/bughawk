@@ -96,22 +96,49 @@ On Windows you can just double-click **`start-app.bat`** — it builds, launches
 
 BugHawk can import an entire recon project from a `.zip` file. This is useful when you receive reconnaissance output from a teammate, a CI pipeline, or your own automation.
 
-**How it works:**
+### How it works
 
-Click the `+` button in the top bar (or use the command palette via `Ctrl/⌘+K` and type "Import"). Select a `.zip` file. BugHawk automatically discovers and parses supported output files by pattern-matching their filenames and content.
+Click the `+` button in the top bar (or use the command palette via `Ctrl/⌘+K` and type "Import"). Select a `.zip` file. BugHawk scans every file inside and uses a two-stage detection system:
 
-**Supported file formats:**
+1. **Filename matching** — recognizes files by common naming patterns (`subdomains.txt`, `urls.txt`, `nuclei.jsonl`, `nmap.xml`, `*.js`, `scope.txt`, etc.)
+2. **Content-based fallback** — if the filename isn't recognized, the file content is analyzed to detect format
+
+### Detection examples
+
+| Filename in zip | How it is detected | Destination tab |
+|---|---|---|
+| `subdomains.txt` | filename contains "subdomain" | Subdomains |
+| `live.txt`, `alive.txt` | filename matches | Subdomains |
+| `all.txt`, `hosts.txt`, `resolved.txt` | filename matches | Subdomains |
+| `urls.txt`, `allurls.txt` | filename contains "url" | URL Parser |
+| `crawled.txt`, `gau.txt`, `katana.txt` | filename contains "crawl", "gau", "katana" | URL Parser |
+| `endpoints.txt`, `wayback.txt` | filename matches | URL Parser |
+| `unknown.txt` with URLs (https://...) | content detection | URL Parser |
+| `unknown.txt` with hosts (api.example.com) | content detection | Subdomains |
+| `nuclei.jsonl`, `nuclei-output.txt` | filename contains "nuclei" | Findings |
+| `unknown.jsonl` con nuclei JSON | content detection (JSONL) | Findings |
+| `cariddi.txt` | filename contains "cariddi" | Findings |
+| `nmap.xml`, `scan.gnmap`, `nmap-output.txt` | filename contains "nmap", `.gnmap`, or `.nmap` extension | Port Scan |
+| `unknown.xml` con `<nmaprun>` | content detection (XML) | Port Scan |
+| `app.bundle.js`, `main.chunk.js` | `.js` extension | JS Recon |
+| `scope.txt`, `in-scope.txt` | filename contains "scope" | Subdomains |
+
+### File formats and parsers
 
 | Format | Extension | What gets parsed |
 |---|---|---|
 | **httpx JSONL** | `.jsonl`, `.txt` | Subdomains + URL Parser (status, title, tech, CNAME, IP, length) |
-| **nmap XML** | `.xml` | Port Scan (hosts, ports, services, versions, banners, OS) |
-| **plain subdomains** | `.txt` | Subdomains (one host per line) |
-| **URL lists** | `.txt` | URL Parser (one URL per line) |
+| **nmap XML** | `.xml` | Port Scan (hosts, ports, services, versions) |
+| **nmap GNMAP** | `.gnmap`, `.nmap`, `.txt` | Port Scan (hosts, ports, services) |
+| **plain host list** | `.txt` | Subdomains (one host per line) |
+| **URL list** | `.txt` | URL Parser (one URL per line) |
+| **nuclei JSONL** | `.jsonl`, `.txt` | Findings (template name, severity, host, extract) |
+| **nuclei plain text** | `.txt` | Findings (one host per line) |
+| **cariddi output** | `.txt` | Findings (URL + severity tag) |
 | **raw JS files** | `.js` | JS Recon (secrets, endpoints, API keys, AST analysis) |
-| **scope / program** | `.txt` | Scope (one domain per line, supports `*.` wildcards) |
+| **scope / program** | `.txt` | Subdomains (one domain per line, supports `*.` wildcards) |
 
-The import modal shows a grouped preview of everything detected before you confirm, so you know exactly what will be ingested.
+The import modal shows a grouped preview of everything detected before you confirm — each file listed under its destination tab with line count and item count, so you know exactly what will be ingested before committing.
 
 ---
 
