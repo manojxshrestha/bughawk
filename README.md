@@ -312,7 +312,7 @@ src/
   styles/*       CSS (BugHawk theme via CSS variables)
 server.mjs       zero-dep production server (dist/ + /__jsproxy)
 vite.config.js   dev/preview server + jsProxyPlugin (CORS-free fetch)
-jsrecon/samples/ sample .js files & URL lists for manual testing
+
 ```
 
 ---
