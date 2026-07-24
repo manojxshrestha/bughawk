@@ -36,7 +36,7 @@ export default function StatusTabStrip({ counts, selection, onSelect }) {
         ), { dot: true, group: statusGroup(Number(code)) })
       )}
       {tab('other', 'Other', { dot: true, group: 'other' })}
-      {tab('new', <span>🆕 New</span>, { group: 'new' })}
+      {tab('new', <span>New</span>, { group: 'new' })}
     </div>
   );
 }

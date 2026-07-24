@@ -2,16 +2,16 @@ import { useState } from 'react';
 
 const TABS = [
   { id: 'dashboard', icon: '▦', label: 'Dashboard' },
-  { id: 'scope', icon: '', label: 'Scope' },
-  { id: 'subdomains', icon: '', label: 'Subdomains', badge: true },
-  { id: 'ports', icon: '', label: 'Port Scan' },
-  { id: 'urlparser', icon: '', label: 'URL Parser' },
-  { id: 'jsrecon', icon: '', label: 'JS Recon' },
-  { id: 'surface', icon: '', label: 'Attack Surface' },
-  { id: 'jwt', icon: '', label: 'JWT Decoder' },
-  { id: 'httpanalyzer', icon: '', label: 'HTTP Analyzer' },
-  { id: 'techstack', icon: '', label: 'Tech Stack' },
-  { id: 'findings', icon: '', label: 'Findings' },
+  { id: 'scope', icon: '◎', label: 'Scope' },
+  { id: 'subdomains', icon: '◈', label: 'Subdomains', badge: true },
+  { id: 'ports', icon: '◉', label: 'Port Scan' },
+  { id: 'urlparser', icon: '↗', label: 'URL Parser' },
+  { id: 'jsrecon', icon: '⚙', label: 'JS Recon' },
+  { id: 'surface', icon: '◔', label: 'Attack Surface' },
+  { id: 'jwt', icon: '◐', label: 'JWT Decoder' },
+  { id: 'httpanalyzer', icon: '◍', label: 'HTTP Analyzer' },
+  { id: 'techstack', icon: '⊞', label: 'Tech Stack' },
+  { id: 'findings', icon: '◎', label: 'Findings' },
 ];
 
 export default function Sidebar({ activeTab, onTabChange, hostCount }) {
@@ -38,11 +38,11 @@ export default function Sidebar({ activeTab, onTabChange, hostCount }) {
       <nav>
         {TABS.map(item)}
         <div className="nav-divider" />
-        {item({ id: 'settings', icon: '', label: 'Settings' })}
-        {item({ id: 'assets', icon: '', label: 'Assets' })}
-        {item({ id: 'wordlists', icon: '', label: 'Wordlists' })}
-        {item({ id: 'dorks', icon: '', label: 'GitHub Dorks' })}
-        {item({ id: 'notebook', icon: '', label: 'Notebook' })}
+        {item({ id: 'settings', icon: '⊡', label: 'Settings' })}
+        {item({ id: 'assets', icon: '⊟', label: 'Assets' })}
+        {item({ id: 'wordlists', icon: '⊞', label: 'Wordlists' })}
+        {item({ id: 'dorks', icon: '○', label: 'GitHub Dorks' })}
+        {item({ id: 'notebook', icon: '□', label: 'Notebook' })}
       </nav>
       <div className="sidebar-spacer" />
     </aside>

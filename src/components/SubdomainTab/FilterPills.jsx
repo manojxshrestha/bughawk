@@ -9,7 +9,7 @@ const META = {
   404: { label: '404', cls: 's404' },
   500: { label: '500', cls: 's500' },
   other: { label: 'Other' },
-  new: { label: '🆕 New' },
+  new: { label: 'New' },
 };
 
 const ORDER = ['all', ...CURATED_CODES, 'other', 'new'];
