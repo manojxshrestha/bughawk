@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { classifyFile, parseContent, PATTERNS } from './project-import.js';
+import { classifyFile, classifyByContent, parseContent, PATTERNS } from './project-import.js';
 
 test('classifies subs.txt as subdomains', () => {
   const r = classifyFile('subs.txt');
@@ -32,24 +32,66 @@ test('classifies cariddi.txt as findings', () => {
   assert.equal(r.parser, 'cariddi');
 });
 
-test('classifies live.txt', () => {
-  assert.equal(classifyFile('live.txt').tab, 'subdomains');
+test('classifies by keyword: subdomains.txt', () => {
+  assert.equal(classifyFile('subdomains.txt').tab, 'subdomains');
 });
 
-test('classifies https-subs.txt', () => {
-  assert.equal(classifyFile('https-subs.txt').tab, 'subdomains');
-  assert.equal(classifyFile('http-subs.txt').tab, 'subdomains');
+test('classifies by keyword: urls.txt', () => {
+  assert.equal(classifyFile('urls.txt').tab, 'urlparser');
 });
 
-test('classifies alive-domains.txt', () => {
-  assert.equal(classifyFile('alive-domains.txt').tab, 'subdomains');
-  assert.equal(classifyFile('alive-domain.txt').tab, 'subdomains');
+test('classifies by keyword: nmap-output.xml', () => {
+  assert.equal(classifyFile('nmap-output.xml').tab, 'ports');
+});
+
+test('classifies .js files as jsrecon', () => {
+  assert.equal(classifyFile('app.bundle.js').tab, 'jsrecon');
+});
+
+test('classifies scope files', () => {
+  assert.equal(classifyFile('scope.txt').tab, 'subdomains');
+  assert.equal(classifyFile('in-scope.txt').tab, 'subdomains');
 });
 
 test('returns null for unknown files', () => {
   assert.equal(classifyFile('readme.md'), null);
   assert.equal(classifyFile('output.html'), null);
-  assert.equal(classifyFile('notes.txt'), null);
+});
+
+test('classifyByContent detects URL lists', () => {
+  const r = classifyByContent('https://example.com/api\nhttps://example.com/login\n');
+  assert.equal(r.tab, 'urlparser');
+});
+
+test('classifyByContent detects host lists', () => {
+  const r = classifyByContent('example.com\napi.example.com\nadmin.example.com\n');
+  assert.equal(r.tab, 'subdomains');
+});
+
+test('classifyByContent detects nuclei JSONL', () => {
+  const line = JSON.stringify({ host: 'https://example.com', 'template-id': 'test', info: { name: 'Test', severity: 'high' } });
+  const r = classifyByContent(line + '\n' + line);
+  assert.equal(r.tab, 'findings');
+  assert.equal(r.parser, 'nuclei');
+});
+
+test('classifyByContent detects nmap XML', () => {
+  const xml = '<?xml version="1.0"?><nmaprun><host><address addr="10.0.0.1" addrtype="ipv4"/></host></nmaprun>';
+  const r = classifyByContent(xml);
+  assert.equal(r.tab, 'ports');
+  assert.equal(r.parser, 'xml');
+});
+
+test('classifyByContent detects cariddi format', () => {
+  const r = classifyByContent('https://example.com/.env [high] Exposed file\n');
+  assert.equal(r.tab, 'findings');
+  assert.equal(r.parser, 'cariddi');
+});
+
+test('classifyByContent detects gnmap format', () => {
+  const r = classifyByContent('Host: 192.168.1.1 ()\tPorts: 22/open/tcp///\n');
+  assert.equal(r.tab, 'ports');
+  assert.equal(r.parser, 'gnmap');
 });
 
 test('parseContent hostlist handles one-per-line', () => {
@@ -83,6 +125,21 @@ Host: 10.0.0.1 ()\tPorts: 443/open/tcp///`;
 test('parseContent gnmap handles empty lines', () => {
   const r = parseContent('# comment\n\n', 'gnmap');
   assert.equal(r.entries.length, 0);
+});
+
+test('parseContent nmap XML extracts hosts and ports', () => {
+  const xml = `<?xml version="1.0"?>
+<nmaprun>
+<host><address addr="10.0.0.1" addrtype="ipv4"/>
+<ports><port protocol="tcp" portid="22"><state state="open"/><service name="ssh"/></port></ports>
+</host>
+</nmaprun>`;
+  const r = parseContent(xml, 'xml');
+  assert.equal(r.type, 'gnmap');
+  assert.equal(r.entries.length, 1);
+  assert.equal(r.entries[0].ip, '10.0.0.1');
+  assert.equal(r.entries[0].ports[0].port, 22);
+  assert.equal(r.entries[0].ports[0].service, 'ssh');
 });
 
 test('parseContent nuclei handles JSONL format', () => {
@@ -119,16 +176,26 @@ test('parseContent cariddi parses severity tags', () => {
   assert.equal(r.findings[1].severity, 'medium');
 });
 
-test('classifyFile matches waygauurls.txt variations', () => {
-  assert.ok(classifyFile('waygauurls.txt'));
-  assert.ok(classifyFile('waygauurls.txt')); // singular
+test('parseContent jsfile returns content', () => {
+  const r = parseContent('var x = 1;\n', 'jsfile');
+  assert.equal(r.type, 'jsfile');
+  assert.equal(r.content, 'var x = 1;\n');
 });
 
-test('every pattern has a unique match regex among patterns that share a parser', () => {
+test('every pattern has required fields', () => {
   for (const p of PATTERNS) {
     assert.ok(p.match, `Pattern missing regex: ${p.label}`);
     assert.ok(p.parser, `Pattern missing parser: ${p.label}`);
     assert.ok(p.label, `Pattern missing label: ${p.match}`);
     assert.ok(p.tab, `Pattern missing tab: ${p.match}`);
   }
+});
+
+test('content fallback handles empty text', () => {
+  assert.equal(classifyByContent(''), null);
+  assert.equal(classifyByContent('\n\n'), null);
+});
+
+test('content fallback returns null for non-matching text', () => {
+  assert.equal(classifyByContent('just some random text here\nwith no real pattern\n'), null);
 });

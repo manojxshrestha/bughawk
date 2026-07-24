@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import JSZip from 'jszip';
-import { classifyFile, parseContent } from '../../lib/project-import.js';
+import { classifyFile, classifyByContent, parseContent } from '../../lib/project-import.js';
 import { get, set, KEYS } from '../../lib/storage.js';
 
 const TAB_LABELS = {
@@ -8,6 +8,7 @@ const TAB_LABELS = {
   urlparser: 'URL Parser',
   findings: 'Findings',
   ports: 'Port Scan',
+  jsrecon: 'JS Recon',
 };
 
 export default function ProjectImportModal({ activeProjectId, onNavigate, onClose, onToast }) {
@@ -39,9 +40,12 @@ export default function ProjectImportModal({ activeProjectId, onNavigate, onClos
         if (entry.dir) return;
         filePromises.push((async () => {
           const name = relativePath.split('/').pop();
-          const matched = classifyFile(name);
-          if (!matched) return;
           const text = await entry.async('string');
+          let matched = classifyFile(name);
+          if (!matched && text.length > 0) {
+            matched = classifyByContent(text);
+          }
+          if (!matched) return;
           const parsed = parseContent(text, matched.parser);
           results.push({
             name,
@@ -50,7 +54,7 @@ export default function ProjectImportModal({ activeProjectId, onNavigate, onClos
             text,
             parsed,
             lineCount: text.split('\n').filter(Boolean).length,
-            itemCount: parsed?.findings?.length || parsed?.entries?.length || parsed?.urls?.length || 0,
+            itemCount: parsed?.findings?.length || parsed?.entries?.length || parsed?.urls?.length || parsed?.content?.length || 0,
           });
         })());
       });
@@ -136,6 +140,16 @@ export default function ProjectImportModal({ activeProjectId, onNavigate, onClos
             await set(KEYS.nucleiFindings(activeProjectId), [...existing, ...findings]);
             summary.push(`${findings.length} findings`);
           }
+        } else if (tab === 'jsrecon') {
+          const sources = [];
+          for (const f of tabFiles) {
+            if (f.parsed?.content) sources.push({ name: f.name, content: f.parsed.content });
+          }
+          if (sources.length > 0) {
+            const existing = await get(KEYS.jsRecon(activeProjectId), []);
+            await set(KEYS.jsRecon(activeProjectId), [...existing, ...sources]);
+            summary.push(`${sources.length} JS files`);
+          }
         }
       }
       const msg = summary.length > 0 ? `Imported: ${summary.join(', ')}` : 'No files matched';
@@ -166,7 +180,7 @@ export default function ProjectImportModal({ activeProjectId, onNavigate, onClos
             <div className="import-zone" onClick={() => inputRef.current?.click()}>
               <div className="import-zone-icon">+</div>
               <div className="import-zone-text">Select a .zip file containing your recon outputs</div>
-              <div className="import-zone-hint">subs.txt, nuclei-output.txt, *.gnmap, crawled URLs, …</div>
+              <div className="import-zone-hint">subdomains.txt, urls.txt, nuclei JSONL, nmap XML/GNMAP, JS files, scope, …</div>
               <input ref={inputRef} type="file" accept=".zip" onChange={onFilePick} hidden />
             </div>
           </div>
