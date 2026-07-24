@@ -1,4 +1,5 @@
 import { lazy, Suspense, useCallback, useEffect, useMemo, useState } from 'react';
+import { clearProjectData } from './lib/storage.js';
 import TopBar from './components/Shell/TopBar.jsx';
 import Sidebar from './components/Shell/Sidebar.jsx';
 import CommandPalette from './components/Shell/CommandPalette.jsx';
@@ -322,7 +323,7 @@ export default function App() {
                   onToggleTheme={toggleTheme}
                   projects={projects}
                   activeProject={activeProject}
-                  onWipeProject={() => subs.clearAll()}
+                  onWipeProject={async () => { if (activeProject && confirm(`Wipe all data for "${activeProject.name}"? This cannot be undone.`)) { await clearProjectData(activeProject.id); showToast(`All data for "${activeProject.name}" cleared.`); } }}
                 />
               )}
             </Suspense>

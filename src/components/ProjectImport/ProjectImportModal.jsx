@@ -250,7 +250,7 @@ export default function ProjectImportModal({ activeProjectId, onNavigate, onClos
   transition: border-color .15s, background .15s;
 }
 .import-zone:hover { border-color: var(--accent-primary-bright); background: var(--surface-hover); }
-.import-zone-icon { font-size: 40px; margin-bottom: 12px; }
+.import-zone-icon { font-size: 32px; width: 64px; height: 64px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--accent-primary-bright); color: #fff; margin-bottom: 12px; font-weight: 700; }
 .import-zone-text { font-weight: 600; font-size: 15px; color: var(--text-primary); }
 .import-zone-hint { font-size: 12px; color: var(--text2); margin-top: 4px; }
 .import-loading { padding: 40px; text-align: center; color: var(--text2); }

@@ -115,6 +115,21 @@ export async function list() {
   }
 }
 
+// Clear all data for a single project (all `bbd:project:<id>:*` keys).
+export async function clearProjectData(projectId) {
+  const prefix = `${PREFIX}project:${projectId}:`;
+  try {
+    const allKeys = await list();
+    const toDelete = allKeys.filter((k) => k.startsWith(prefix));
+    if (toDelete.length === 0) return;
+    const tx = (await db()).transaction(STORE, 'readwrite');
+    await Promise.all(toDelete.map((k) => tx.store.delete(k)));
+    await tx.done;
+  } catch (e) {
+    emitError(`Failed to clear project data. ${e.message}`);
+  }
+}
+
 // Clear ALL project data from IndexedDB. Keeps only the auth key so the
 // login gate still works after reload.
 export async function clearAllData() {

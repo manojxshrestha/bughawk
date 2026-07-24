@@ -41,10 +41,10 @@ export default function SettingsTab({ theme, onToggleTheme, projects, onWipeProj
         {activeProject && (
           <div className="setting-row">
             <div className="setting-info">
-              <div className="setting-name">Clear “{activeProject.name}” hosts</div>
-              <div className="setting-desc">Removes all subdomains in the active project. Cannot be undone.</div>
+              <div className="setting-name">Wipe “{activeProject.name}” data</div>
+              <div className="setting-desc">Removes all data for this project (subdomains, URLs, ports, findings, sessions, JS recon, …). Cannot be undone.</div>
             </div>
-            <button className="btn btn-danger btn-sm" onClick={onWipeProject}>Clear</button>
+            <button className="btn btn-danger btn-sm" onClick={onWipeProject}>Wipe</button>
           </div>
         )}
       </div>
