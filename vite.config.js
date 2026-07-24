@@ -31,6 +31,6 @@ function jsProxyPlugin() {
 }
 
 export default defineConfig({
-  base: '/bughawk/',
+  base: process.env.VITE_BASE_PATH || '/bughawk/',
   plugins: [react(), jsProxyPlugin()],
 });
