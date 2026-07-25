@@ -1,0 +1,10 @@
+import{d as p}from"./index-C0FN9ayN.js";function c(e,t,s){const o=new Blob([t],{type:s}),n=URL.createObjectURL(o),i=document.createElement("a");i.href=n,i.download=e,document.body.appendChild(i),i.click(),i.remove(),URL.revokeObjectURL(n)}function u(e){const t=e==null?"":String(e);return/[",\n]/.test(t)?`"${t.replace(/"/g,'""')}"`:t}function r(){return new Date().toISOString().slice(0,19).replace(/[:T]/g,"-")}function f(e,t="subdomains"){const s=e.map(o=>o.host).join(`
+`)+`
+`;c(`${t}-${r()}.txt`,s,"text/plain")}function $(e,t="subdomains"){const s="host,status,title",o=e.map(n=>`${u(n.host)},${u(p(n.status))},${u(n.title||"")}`);c(`${t}-${r()}.csv`,[s,...o].join(`
+`)+`
+`,"text/csv")}function l(e,t="target"){const s=[];if(s.push(`# JS Recon — ${t}`),s.push(`_generated ${new Date().toISOString().slice(0,19).replace("T"," ")}_`),s.push(`
+**Risk ${e.summary?.riskScore??0}/100** · ${e.summary?.criticalCount??0} critical · ${e.bySource?.length??0} file(s) with findings
+`),e.secrets?.length){s.push(`## Secrets (${e.secrets.length})`),s.push("| Severity | Confidence | Type | Value | Source |","|---|---|---|---|---|");for(const n of e.secrets.slice(0,500))s.push(`| ${n.severity} | ${n.confidence||""} | ${n.type} | \`${(n.value||"").replace(/\|/g,"\\|")}\` | ${(n.files||[])[0]||""} |`);s.push("")}if(e.misconfigs?.length){s.push(`## Security Misconfigurations (${e.misconfigs.length})`),s.push("| Severity | Type | Evidence |","|---|---|---|");for(const n of e.misconfigs.slice(0,300))s.push(`| ${n.severity} | ${n.type} | \`${(n.evidence||"").replace(/\|/g,"\\|").slice(0,100)}\` |`);s.push("")}const o=(n,i)=>{i?.length&&(s.push(`## ${n} (${i.length})`),s.push("```"),s.push(i.slice(0,1e3).join(`
+`)),s.push("```\n"))};return o("Endpoints",e.endpoints),o("URLs",e.urls),o("Paths",e.paths),o("Domains",e.domains),o("Source maps",e.sourcemaps),o("GraphQL",e.graphql),e.params?.length&&o("Parameters",e.params),s.join(`
+`)+`
+`}function m(e,t="target"){c(`jsrecon-${t}-${r()}.md`,l(e,t),"text/markdown")}function g(e,t="jsrecon"){c(`${t}-${r()}.json`,JSON.stringify(e,null,2),"application/json")}export{f as a,m as b,g as c,$ as e};
