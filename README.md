@@ -59,7 +59,7 @@ BugHawk is a single-page web app that runs on your machine and acts as the **cen
 ## Quick Start
 
 ```bash
-git clone https://github.com/mehulgupta1/bughawk.git
+git clone https://github.com/manojxshrestha/bughawk.git
 cd bughawk
 npm install
 npm run dev        # opens the dev server (http://localhost:5173)
@@ -371,8 +371,3 @@ Contributions welcome — see [CONTRIBUTING.md](CONTRIBUTING.md). Run `npm run l
 ## License
 
 [MIT](LICENSE)
-
-## Author
-
-- [mehulgupta1](https://github.com/mehulgupta1)
-- [manojxshrestha](https://github.com/manojxshrestha)
